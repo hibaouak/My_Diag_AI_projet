@@ -1750,5 +1750,86 @@
       }
     ],
     "timestamp": "2026-03-07T18:31:09.082266"
+  },
+  {
+    "id": "27",
+    "patient_name": "Ibtissam",
+    "age": 20,
+    "gender": "F",
+    "symptoms": [
+      "skin_rash",
+      "itching",
+      "continuous_sneezing"
+    ],
+    "results": [
+      {
+        "disease": "Fungal infection",
+        "probability_percent": 5.88,
+        "probability_decimal": 0.0588,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Considérer un antifongique topique ou systémique selon la localisation. Examen mycologique recommandé.",
+        "suggested_tests": [
+          "Examen mycologique",
+          "Biopsie cutanée",
+          "Examen en lumière de Wood"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Drug Reaction",
+        "probability_percent": 4.96,
+        "probability_decimal": 0.0496,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Allergy",
+        "probability_percent": 3.87,
+        "probability_decimal": 0.0387,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Identifier l'allergène. Antihistaminiques de 2ème génération en première intention. Évaluation allergologique si persistant.",
+        "suggested_tests": [
+          "Tests cutanés",
+          "IgE spécifiques",
+          "Test de provocation"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Acne",
+        "probability_percent": 3.46,
+        "probability_decimal": 0.0346,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Chronic cholestasis",
+        "probability_percent": 3.31,
+        "probability_decimal": 0.0331,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "timestamp": "2026-03-07T22:14:46.480994"
   }
 ]

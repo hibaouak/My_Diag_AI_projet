@@ -252,7 +252,7 @@ export default function ChooseSpace() {
           .footer-links {
             gap: 20px;
           }
-        }
+       
         `}
       </style>
 
@@ -271,13 +271,13 @@ export default function ChooseSpace() {
           <div className="spaces">
             <div
               className="spaceCard"
-              onClick={() => navigate("/doctor-login")}
+              onClick={() => navigate("/Auth")}
               onMouseEnter={() => setHoveredCard('doctor')}
               onMouseLeave={() => setHoveredCard(null)}
             >
               <div className="spaceIcon">👨‍⚕️</div>
               <div className="spaceTitle">Espace Médecin</div>
-              <div className="spaceDesc">
+              <div className="spaceDesc"  >
                 Accédez à votre tableau de bord<br />
                 et gérez les diagnostics
               </div>
@@ -286,7 +286,7 @@ export default function ChooseSpace() {
 
             <div
               className="spaceCard"
-              onClick={() => navigate("/patient-dashboard")}
+              onClick={() => navigate("/Auth-patient")}
               onMouseEnter={() => setHoveredCard('user')}
               onMouseLeave={() => setHoveredCard(null)}
             >
@@ -301,10 +301,10 @@ export default function ChooseSpace() {
           </div>
 
           <div className="footer-links">
-            <a href="/about" className="footer-link">À propos</a>
-            <a href="/contact" className="footer-link">Contact</a>
-            <a href="/legal" className="footer-link">CGU</a>
-            <a href="/help" className="footer-link">Aide</a>
+            <a href="/about" className="footer-link" onClick={() => navigate("/About")}>À propos</a>
+            <a href="/contact" className="footer-link" onClick={() => navigate("/Contact")}>Contact</a>
+            <a href="/legal" className="footer-link" onClick={() => navigate("/Legal")}>CGU</a>
+            <a href="/help" className="footer-link" onClick={() => navigate("/Help")}>Aide</a>
           </div>
 
           <div className="footer-note">

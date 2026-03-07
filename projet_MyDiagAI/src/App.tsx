@@ -15,7 +15,9 @@ import SettingsPatient from "@/pages/Settings-patient";
 import NotFound from "@/pages/NotFound";
 import ChooseSpace from "@/pages/Choosespace";
 import PatientDashboard from "@/pages/patient-dashboard";
-
+import Recherche from "@/pages/Recherche";
+import AuthPatient from "./pages/Auth-patient";
+import About from "./pages/About";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -43,7 +45,12 @@ const App = () => (
             
             {/* Espace Patient - Page Paramètres */}
             <Route path="/settings-patient" element={<SettingsPatient />} />
+
+            <Route path="/Auth-patient" element={<AuthPatient />} />
+             <Route path="/About" element={<About/>} />
             
+              {/* Espace Patient - Page Recherche */}
+              <Route path="/Recherche" element={<Recherche />} />
             {/* Routes protégées - Espace Médecin (besoin d'être connecté) */}
             <Route path="/dashboard" element={
               <ProtectedRoute>

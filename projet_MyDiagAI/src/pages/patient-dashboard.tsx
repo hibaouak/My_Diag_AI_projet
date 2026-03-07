@@ -645,7 +645,7 @@ const PatientDashboard: React.FC = () => {
             
             <div className="nav-links">
               <a href="#" className="nav-link active">Dashboard</a>
-              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/recherche-medecins'); }}>Diagnostic</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>Recherche</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/statistiques'); }}>Statistiques</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Settings-patient'); }}>Paramètres</a>
             </div>
@@ -677,8 +677,8 @@ const PatientDashboard: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <button 
                   className="new-diagnostic-btn" 
-                  onClick={handleNewSearch}
-                >
+                  onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>
+            
                   <span>+</span> Nouvelle recherche
                 </button>
                 <a href="#" className="view-stats-link" onClick={handleViewStats}>
@@ -738,7 +738,7 @@ const PatientDashboard: React.FC = () => {
               {/* Quick Actions */}
               <div className="actions-card">
                 <h3>Actions rapides</h3>
-                <div className="action-buttons">
+                <div className="action-buttons"  onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>
                   <button 
                     className="action-btn primary"
                     onClick={handleNewSearch}
