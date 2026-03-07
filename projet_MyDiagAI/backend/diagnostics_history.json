@@ -1831,5 +1831,174 @@
       }
     ],
     "timestamp": "2026-03-07T22:14:46.480994"
+  },
+  {
+    "id": "28",
+    "patient_name": "Aziza",
+    "age": 40,
+    "gender": "F",
+    "symptoms": [
+      "chills",
+      "nodal_skin_eruptions",
+      "shivering"
+    ],
+    "results": [
+      {
+        "disease": "Allergy",
+        "probability_percent": 12.56,
+        "probability_decimal": 0.1256,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Identifier l'allergène. Antihistaminiques de 2ème génération en première intention. Évaluation allergologique si persistant.",
+        "suggested_tests": [
+          "Tests cutanés",
+          "IgE spécifiques",
+          "Test de provocation"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Fungal infection",
+        "probability_percent": 6.8,
+        "probability_decimal": 0.068,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Considérer un antifongique topique ou systémique selon la localisation. Examen mycologique recommandé.",
+        "suggested_tests": [
+          "Examen mycologique",
+          "Biopsie cutanée",
+          "Examen en lumière de Wood"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Malaria",
+        "probability_percent": 3.41,
+        "probability_decimal": 0.0341,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Heart attack",
+        "probability_percent": 3.06,
+        "probability_decimal": 0.0306,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "APPELER LE 15 IMMÉDIATEMENT. ECG, troponine, MONA (Morphine, Oxygène, Nitrés, Aspirine).",
+        "suggested_tests": [
+          "ECG 12 dérivations",
+          "Troponine",
+          "Échocardiographie",
+          "Coronarographie"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Gastroenteritis",
+        "probability_percent": 2.85,
+        "probability_decimal": 0.0285,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Réhydratation orale ou IV. Examens parasitologiques si persistant. Isolement des selles.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "timestamp": "2026-03-07T22:56:44.305347"
+  },
+  {
+    "id": "29",
+    "patient_name": "Amin",
+    "age": 30,
+    "gender": "M",
+    "symptoms": [
+      "shivering",
+      "stomach_pain",
+      "acidity",
+      "nodal_skin_eruptions",
+      "chills",
+      "muscle_wasting",
+      "vomiting"
+    ],
+    "results": [
+      {
+        "disease": "Allergy",
+        "probability_percent": 11.07,
+        "probability_decimal": 0.1107,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Identifier l'allergène. Antihistaminiques de 2ème génération en première intention. Évaluation allergologique si persistant.",
+        "suggested_tests": [
+          "Tests cutanés",
+          "IgE spécifiques",
+          "Test de provocation"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "GERD",
+        "probability_percent": 9.05,
+        "probability_decimal": 0.0905,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Inhibiteurs de la pompe à protons pendant 4-8 semaines. Modifications du mode de vie. Endoscopie si symptômes d'alarme.",
+        "suggested_tests": [
+          "pH-métrie œsophagienne",
+          "Endoscopie digestive haute",
+          "Manométrie œsophagienne"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "AIDS",
+        "probability_percent": 7.38,
+        "probability_decimal": 0.0738,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Fungal infection",
+        "probability_percent": 6.32,
+        "probability_decimal": 0.0632,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Considérer un antifongique topique ou systémique selon la localisation. Examen mycologique recommandé.",
+        "suggested_tests": [
+          "Examen mycologique",
+          "Biopsie cutanée",
+          "Examen en lumière de Wood"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Drug Reaction",
+        "probability_percent": 4.67,
+        "probability_decimal": 0.0467,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "timestamp": "2026-03-07T23:02:09.433737"
   }
 ]

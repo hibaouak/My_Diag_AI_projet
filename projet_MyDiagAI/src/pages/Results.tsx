@@ -220,7 +220,8 @@ const Results = () => {
           {
             name: patientInfo.name,
             age: patientInfo.age?.toString() || "",
-            gender: patientInfo.gender
+            gender: patientInfo.gender,
+            genre: undefined
           },
           selectedSymptoms || [],
           pdfResults
