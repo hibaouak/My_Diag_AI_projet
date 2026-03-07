@@ -1667,5 +1667,88 @@
       }
     ],
     "timestamp": "2026-03-07T02:55:33.409526"
+  },
+  {
+    "id": "26",
+    "patient_name": "Imran",
+    "age": 20,
+    "gender": "M",
+    "symptoms": [
+      "shivering",
+      "chills",
+      "nodal_skin_eruptions"
+    ],
+    "results": [
+      {
+        "disease": "Allergy",
+        "probability_percent": 12.56,
+        "probability_decimal": 0.1256,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Identifier l'allergène. Antihistaminiques de 2ème génération en première intention. Évaluation allergologique si persistant.",
+        "suggested_tests": [
+          "Tests cutanés",
+          "IgE spécifiques",
+          "Test de provocation"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Fungal infection",
+        "probability_percent": 6.8,
+        "probability_decimal": 0.068,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Considérer un antifongique topique ou systémique selon la localisation. Examen mycologique recommandé.",
+        "suggested_tests": [
+          "Examen mycologique",
+          "Biopsie cutanée",
+          "Examen en lumière de Wood"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Malaria",
+        "probability_percent": 3.41,
+        "probability_decimal": 0.0341,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Heart attack",
+        "probability_percent": 3.06,
+        "probability_decimal": 0.0306,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "APPELER LE 15 IMMÉDIATEMENT. ECG, troponine, MONA (Morphine, Oxygène, Nitrés, Aspirine).",
+        "suggested_tests": [
+          "ECG 12 dérivations",
+          "Troponine",
+          "Échocardiographie",
+          "Coronarographie"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Gastroenteritis",
+        "probability_percent": 2.85,
+        "probability_decimal": 0.0285,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Réhydratation orale ou IV. Examens parasitologiques si persistant. Isolement des selles.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "timestamp": "2026-03-07T18:31:09.082266"
   }
 ]

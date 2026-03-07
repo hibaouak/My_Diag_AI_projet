@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export default function ChooseSpace() {
   const navigate = useNavigate();
-  const [hoveredCard, setHoveredCard] = useState(null);
+  const [hoveredCard, setHoveredCard] = useState<string | null>(null);
 
   return (
     <>
@@ -258,7 +258,12 @@ export default function ChooseSpace() {
 
       <div className="container">
         <div className="card">
-          <img className="img" src="/logo_app.png" alt="MyDiagAI logo" style={{ width: "250px", height: "250px", display: "block", margin: "0 auto" }} />
+          <img 
+            className="img" 
+            src="/logo_app.png" 
+            alt="MyDiagAI logo" 
+            style={{ width: "250px", height: "250px", display: "block", margin: "0 auto" }} 
+          />
           <p className="subtitle">
             Plateforme de diagnostic médical intelligent
           </p>
@@ -281,7 +286,7 @@ export default function ChooseSpace() {
 
             <div
               className="spaceCard"
-              onClick={() => navigate("/user-auth")}
+              onClick={() => navigate("/patient-dashboard")}
               onMouseEnter={() => setHoveredCard('user')}
               onMouseLeave={() => setHoveredCard(null)}
             >

@@ -11,8 +11,10 @@ import Diagnostic from "@/pages/Diagnostic";
 import Results from "@/pages/Results";
 import Statistics from "@/pages/Statistics";
 import Settings from "@/pages/Settings";
+import SettingsPatient from "@/pages/Settings-patient";
 import NotFound from "@/pages/NotFound";
 import ChooseSpace from "@/pages/Choosespace";
+import PatientDashboard from "@/pages/patient-dashboard";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,15 +32,19 @@ const App = () => (
         <Toaster />
         <Sonner />
         <BrowserRouter>
-       
-
-       
           <Routes>
             <Route path="/" element={<ChooseSpace />} />
+            
             {/* Page d'authentification publique */}
             <Route path="/auth" element={<Auth />} />
             
-            {/* Routes protégées - besoin d'être connecté */}
+            {/* Espace Patient - accessible sans authentification pour l'instant */}
+            <Route path="/patient-dashboard" element={<PatientDashboard />} />
+            
+            {/* Espace Patient - Page Paramètres */}
+            <Route path="/settings-patient" element={<SettingsPatient />} />
+            
+            {/* Routes protégées - Espace Médecin (besoin d'être connecté) */}
             <Route path="/dashboard" element={
               <ProtectedRoute>
                 <Dashboard />
