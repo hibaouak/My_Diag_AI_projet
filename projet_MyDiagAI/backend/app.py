@@ -18,10 +18,8 @@ import hashlib
 import mysql.connector
 from mysql.connector import pooling
 from functools import wraps
-
-print("=" * 60)
-print(f"MyDiagAI Backend - VERSION AVEC VOTRE BASE DE DONNÉES - Python {sys.version.split()[0]}")
-print("=" * 60)
+# Rendre les modèles accessibles pour import
+__all__ = ['app', 'model', 'label_encoder', 'scaler', 'symptoms_list']
 
 # Charger les variables d'environnement
 load_dotenv()
@@ -29,8 +27,32 @@ load_dotenv()
 # Initialiser Flask
 app = Flask(__name__)
 
+# =============== NOUVEAU : AJOUT DE VOTRE CODE ===============
+# Importer votre module de prédiction (vous allez le créer)
+from models.modele import predictor
+# ==============================================================
+from routes.diagnostic_routes import diagnostic_bp
+app.register_blueprint(diagnostic_bp, url_prefix='/api') # type: ignore
+print("=" * 60)
+print(f"MyDiagAI Backend - VERSION AVEC VOTRE BASE DE DONNÉES - Python {sys.version.split()[0]}")
+print("=" * 60)
+
 # Configuration CORS
 CORS(app, origins="*")  # Pour le développement seulement
+
+# =============== NOUVEAU : AJOUT DE VOTRE ROUTE D'ACCUEIL ===============
+# Cette route ne remplace PAS votre route existante, c'est une route supplémentaire
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({
+        'message': 'API MyDiagAI',
+        'version': '1.0',
+        'endpoints': {
+            'GET /api/symptoms': 'Liste des 50 symptômes',
+            'POST /api/predict': 'Prédire une spécialité à partir des symptômes'
+        }
+    })
+# =========================================================================
 
 # Configuration
 MODEL_PATH = os.path.join(os.path.dirname(__file__), 'modeles_medical')
@@ -667,46 +689,7 @@ def login():
 
 # ==================== ROUTES PUBLIQUES ====================
 
-@app.route('/')
-def home():
-    """Page d'accueil de l'API"""
-    return jsonify({
-        'message': 'MyDiagAI Backend API',
-        'version': '2.0.0',
-        'database': 'connectée' if connection_pool else 'non connectée (fallback JSON)',
-        'status': 'running',
-        'timestamp': datetime.now().isoformat(),
-        'endpoints': {
-            '/': 'Page d\'accueil',
-            '/api/health': 'État du serveur',
-            '/api/auth/login': 'Se connecter (POST)',
-            '/api/symptoms': 'Liste des symptômes',
-            '/api/diseases': 'Liste des maladies',
-            '/api/diagnose': 'Faire un diagnostic (POST - Authentifié)',
-            '/api/history': 'Historique (GET - Authentifié)',
-            '/api/dashboard': 'Dashboard (GET - Authentifié)',
-            '/api/stats': 'Statistiques (GET - Authentifié)'
-        }
-    })
-
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    """Vérification de l'état du serveur"""
-    conn = get_db()
-    db_status = "connected" if conn else "disconnected"
-    if conn:
-        conn.close()
-    
-    return jsonify({
-        'status': 'healthy',
-        'service': 'MyDiagAI',
-        'database': db_status,
-        'timestamp': datetime.now().isoformat(),
-        'model_loaded': model is not None,
-        'symptoms_available': len(symptoms_list),
-        'mode': 'PRODUCTION' if model is not None else 'SIMULATION'
-    })
-
+# =============== NOUVEAU : ROUTE POUR LA LISTE DES SYMPTÔMES (VOTRE VERSION) ===============
 @app.route('/api/symptoms', methods=['GET'])
 def get_symptoms():
     """Retourne la liste des symptômes"""
@@ -714,6 +697,7 @@ def get_symptoms():
         'count': len(symptoms_list),
         'symptoms': symptoms_list
     })
+# ======================================================================================
 
 @app.route('/api/diseases', methods=['GET'])
 def get_diseases():
@@ -786,89 +770,12 @@ def get_history():
         print(f"❌ Erreur history: {e}")
         return jsonify({'error': str(e)}), 500
 
-@app.route('/api/diagnose', methods=['POST'])
-@login_required
-def diagnose():
-    """Effectuer un diagnostic"""
-    try:
-        doctor = g.current_doctor
-        doctor_id = doctor['id']
-        
-        data = request.json
-        
-        if not data:
-            return jsonify({'error': 'Aucune donnée fournie'}), 400
-        
-        required_fields = ['symptoms', 'age', 'gender']
-        for field in required_fields:
-            if field not in data:
-                return jsonify({'error': f'Champ manquant: {field}'}), 400
-        
-        symptoms = data['symptoms']
-        age = int(data['age'])
-        gender = data['gender'].upper()
-        patient_name = data.get('patient_name', 'Patient')
-        additional_notes = data.get('additional_notes', '')
-        
-        if gender not in ['M', 'F']:
-            return jsonify({'error': 'Genre doit être M ou F'}), 400
-        
-        if age < 1 or age > 120:
-            return jsonify({'error': 'Âge invalide'}), 400
-        
-        print(f"🩺 Diagnostic pour: {patient_name}")
-        print(f"👨‍⚕️ Médecin ID: {doctor_id}")
-        
-        # Faire le diagnostic
-        if model is None:
-            results = simulate_diagnosis(symptoms)
-        else:
-            results = perform_ml_diagnosis(symptoms, age, gender)
-        
-        # Sauvegarder
-        saved, message = save_diagnostic(
-            doctor_id=doctor_id,
-            patient_name=patient_name,
-            age=age,
-            gender=gender,
-            symptoms=symptoms,
-            results=results,
-            notes=additional_notes
-        )
-        
-        response = {
-            'success': True,
-            'diagnostic_assistant': {
-                'results': results,
-                'statistics': {
-                    'symptoms_count': len(symptoms),
-                    'top_diagnosis': results[0]['disease'] if results else 'Aucun',
-                    'top_probability': results[0]['probability_percent'] if results else 0
-                },
-                'patient_info': {
-                    'age': age,
-                    'gender': gender,
-                    'patient_name': patient_name,
-                    'symptoms_analyzed': symptoms
-                },
-                'doctor_info': {
-                    'id': doctor['id'],
-                    'name': doctor.get('full_name', 'Médecin')
-                },
-                'diagnostic_id': saved['id'] if saved else None,
-                'mode': 'production' if model is not None else 'simulation'
-            }
-        }
-        
-        return jsonify(response)
-        
-    except Exception as e:
-        print(f"❌ Erreur diagnostic: {e}")
-        traceback.print_exc()
-        return jsonify({'error': str(e)}), 500
+# ==================== ROUTES DE SIMULATION (NON UTILISÉES) ====================
+# Ces fonctions sont gardées pour référence mais ne sont pas utilisées comme routes
+# La vraie route /api/diagnose est dans diagnostic_routes.py
 
 def perform_ml_diagnosis(symptoms, age, gender):
-    """Diagnostic avec ML"""
+    """Diagnostic avec ML (utilisé par la route dans diagnostic_routes.py)"""
     input_vector = np.zeros(len(symptoms_list) + 2)
     
     for i, symptom in enumerate(symptoms_list):
@@ -913,33 +820,19 @@ def perform_ml_diagnosis(symptoms, age, gender):
     results.sort(key=lambda x: x['probability_decimal'], reverse=True)
     return results
 
-def simulate_diagnosis(symptoms):
-    """Simulation de diagnostic"""
-    return [
-        {
-            'disease': 'Common Cold',
-            'probability_percent': 78.5,
-            'probability_decimal': 0.785,
-            'confidence_level': 'ÉLEVÉE',
-            'medical_action': 'Traitement symptomatique',
-            'specific_guidance': 'Repos, hydratation, antipyrétiques si fièvre',
-            'suggested_tests': ['Examen clinique'],
-            'risk_level': 'Faible'
-        },
-        {
-            'disease': 'Seasonal Allergy',
-            'probability_percent': 52.3,
-            'probability_decimal': 0.523,
-            'confidence_level': 'MODÉRÉE',
-            'medical_action': 'Antihistaminiques',
-            'specific_guidance': 'Éviter les allergènes',
-            'suggested_tests': ['Tests cutanés'],
-            'risk_level': 'Faible'
-        }
-    ]
+
+# ==================== ROUTE HEALTH ====================
+@app.route('/api/health', methods=['GET', 'OPTIONS'])
+def health_check():
+    """Vérification de l'état du serveur"""
+    return jsonify({
+        'status': 'healthy',
+        'service': 'MyDiagAI',
+        'database': 'connected' if connection_pool else 'disconnected',
+        'timestamp': datetime.now().isoformat()
+    }), 200
 
 # ==================== DÉMARRAGE ====================
-
 if __name__ == '__main__':
     try:
         port = int(os.getenv('PORT', 5000))
@@ -960,12 +853,14 @@ if __name__ == '__main__':
         print(f"   GET  http://localhost:{port}/api/diseases - Liste maladies")
         print(f"   GET  http://localhost:{port}/api/dashboard - Dashboard")
         print(f"   GET  http://localhost:{port}/api/history - Historique")
-        print(f"   POST http://localhost:{port}/api/diagnose - Diagnostic")
+        print(f"   POST http://localhost:{port}/api/diagnose - Diagnostic (via blueprint)")
+        print(f"   POST http://localhost:{port}/api/predict - Prédiction patient")
+        print(f"   GET  http://localhost:{port}/api/health - Santé du serveur")
         
         print("\n🔑 POUR TESTER:")
         print(f'   curl -X POST http://localhost:{port}/api/auth/login \\')
         print(f'        -H "Content-Type: application/json" \\')
-        print(f'        -d \'{{"email":"votre_email","password":"votre_mdp"}}\'')
+        print(f'        -d \'{{"email":"admin@diagnostic.com","password":"admin123"}}\'')
         print("\n" + "=" * 60)
         print("✅ Le serveur est prêt!")
         print("=" * 60)

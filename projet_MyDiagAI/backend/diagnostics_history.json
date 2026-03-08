@@ -2000,5 +2000,89 @@
       }
     ],
     "timestamp": "2026-03-07T23:02:09.433737"
+  },
+  {
+    "id": "30",
+    "patient_name": "Sanae",
+    "age": 30,
+    "gender": "F",
+    "symptoms": [
+      "itching",
+      "continuous_sneezing",
+      "joint_pain",
+      "ulcers_on_tongue",
+      "weight_gain",
+      "anxiety"
+    ],
+    "results": [
+      {
+        "disease": "Hypoglycemia",
+        "probability_percent": 10.29,
+        "probability_decimal": 0.1029,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "GERD",
+        "probability_percent": 5.44,
+        "probability_decimal": 0.0544,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Inhibiteurs de la pompe à protons pendant 4-8 semaines. Modifications du mode de vie. Endoscopie si symptômes d'alarme.",
+        "suggested_tests": [
+          "pH-métrie œsophagienne",
+          "Endoscopie digestive haute",
+          "Manométrie œsophagienne"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Hypothyroidism",
+        "probability_percent": 4.75,
+        "probability_decimal": 0.0475,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Fungal infection",
+        "probability_percent": 3.85,
+        "probability_decimal": 0.0385,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Considérer un antifongique topique ou systémique selon la localisation. Examen mycologique recommandé.",
+        "suggested_tests": [
+          "Examen mycologique",
+          "Biopsie cutanée",
+          "Examen en lumière de Wood"
+        ],
+        "risk_level": "Faible"
+      },
+      {
+        "disease": "Drug Reaction",
+        "probability_percent": 3.73,
+        "probability_decimal": 0.0373,
+        "confidence_level": "TRÈS FAIBLE - Peu probable",
+        "medical_action": "Peu probable en l'absence d'autres signes. Surveiller l'évolution.",
+        "specific_guidance": "Diagnostic différentiel à considérer. Examen clinique complet recommandé.",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines standard"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "timestamp": "2026-03-08T00:59:00.429332"
   }
 ]

@@ -2,12 +2,12 @@
 import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, Users, TrendingUp, Clock, Plus, History, BarChart3, RefreshCw, User } from "lucide-react";
+import { Activity, Users, TrendingUp, Clock, Plus, BarChart3, RefreshCw, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { getDashboardStats } from "@/services/statsService";
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext"; // ← AJOUTER
+import { useAuth } from "@/contexts/AuthContext";
 import { Badge } from "@/components/ui/badge";
 
 interface DashboardData {
@@ -24,13 +24,13 @@ interface DashboardData {
     disease: string;
     count: number;
   }>;
-  current_user?: string; // ← AJOUTER (optionnel)
-  user_type?: string; // ← AJOUTER (optionnel)
+  current_user?: string;
+  user_type?: string;
 }
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user } = useAuth(); // ← AJOUTER: Récupérer l'utilisateur connecté
+  const { user } = useAuth();
   
   const [stats, setStats] = useState<DashboardData>({
     total_diagnostics: 0,
@@ -77,8 +77,8 @@ const Dashboard = () => {
         total_diagnostics: data.total_diagnostics,
         total_patients: data.total_patients,
         accuracy: data.accuracy,
-        recent_count: data.recent_diagnostics.length,
-        current_user: user?.full_name, // ← AJOUTER
+        recent_count: data.recent_diagnostics?.length || 0,
+        current_user: user?.full_name,
         timestamp: new Date().toISOString()
       });
     } catch (error) {
@@ -225,7 +225,7 @@ const Dashboard = () => {
               </p>
               {stats.total_diagnostics > 0 && (
                 <p className="text-xs text-green-600 mt-1">
-                  {stats.recent_diagnostics.length > 0 
+                  {stats.recent_diagnostics?.length > 0 
                     ? `${stats.recent_diagnostics.length} ce mois` 
                     : "Actif"}
                 </p>
@@ -247,7 +247,7 @@ const Dashboard = () => {
               </p>
               {stats.total_patients > 0 && (
                 <p className="text-xs text-blue-600 mt-1">
-                  {Math.min(stats.total_patients, stats.recent_diagnostics.length)} actifs
+                  {Math.min(stats.total_patients, stats.recent_diagnostics?.length || 0)} actifs
                 </p>
               )}
             </CardContent>
@@ -282,12 +282,14 @@ const Dashboard = () => {
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold">
-                {stats.recent_diagnostics[0].patient_name}
+                {stats.recent_diagnostics && stats.recent_diagnostics.length > 0 
+                  ? stats.recent_diagnostics[0].patient_name 
+                  : '-'}
               </div>
               <p className="text-xs text-muted-foreground mt-1">
                 Dernier diagnostic
               </p>
-              {stats.recent_diagnostics.length > 0 && (
+              {stats.recent_diagnostics && stats.recent_diagnostics.length > 0 && (
                 <p className="text-xs text-purple-600 mt-1">
                   {stats.recent_diagnostics[0].patient_name}
                 </p>
@@ -321,7 +323,7 @@ const Dashboard = () => {
         )}
 
         {/* Recent Activity - seulement si des données existent */}
-        {stats.recent_diagnostics.length > 0 && (
+        {stats.recent_diagnostics && stats.recent_diagnostics.length > 0 && (
           <div className="grid gap-6 md:grid-cols-2">
             <Card className="shadow-card">
               <CardHeader>
@@ -342,9 +344,9 @@ const Dashboard = () => {
                     className="flex items-center justify-between border-b border-border pb-3 last:border-0 last:pb-0 hover:bg-accent/50 p-2 rounded transition-colors"
                   >
                     <div>
-                      <p className="font-medium">{diag.patient_name}</p>
+                      <p className="font-medium">{diag.patient_name || 'Patient'}</p>
                       <p className="text-sm text-muted-foreground">
-                        {diag.top_disease} • {getTimeAgo(diag.date)}
+                        {diag.top_disease || 'Inconnu'} • {getTimeAgo(diag.date)}
                       </p>
                     </div>
                     <Button 
@@ -395,7 +397,7 @@ const Dashboard = () => {
         )}
 
         {/* Top diseases si disponibles */}
-        {stats.top_diseases.length > 0 && (
+        {stats.top_diseases && stats.top_diseases.length > 0 && (
           <Card className="shadow-card">
             <CardHeader>
               <CardTitle>Maladies Fréquentes</CardTitle>

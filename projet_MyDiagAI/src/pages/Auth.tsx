@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/contexts/AuthContext";
-import logo from "@/assets/mydiagai-logo.png"; // Vérifiez que ce chemin est correct
+import logo from "@/assets/mydiagai-logo.png";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -33,18 +33,41 @@ const Auth = () => {
     setLoginError("");
     setLoginLoading(true);
     
-    const result = await login({
-      email: loginEmail,
-      password: loginPassword
-    });
-    
-    if (result.success) {
-      navigate("/dashboard");
-    } else {
-      setLoginError(result.error || "Erreur de connexion");
+    try {
+      // Appel direct à l'API au lieu du contexte
+      const response = await fetch('http://localhost:5000/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: loginEmail,
+          password: loginPassword
+        })
+      });
+
+      const data = await response.json();
+      console.log('📥 Réponse login:', data);
+      
+      if (data.success) {
+        // ✅ SAUVEGARDER LE TOKEN DANS LOCALSTORAGE
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        
+        console.log('✅ Token sauvegardé:', data.token);
+        console.log('✅ User sauvegardé:', data.user);
+        
+        // ✅ REDIRECTION VERS LE DASHBOARD MÉDECIN
+        navigate("/dashboard");
+      } else {
+        setLoginError(data.error || "Erreur de connexion");
+      }
+    } catch (error) {
+      console.error('❌ Erreur:', error);
+      setLoginError("Erreur de connexion au serveur");
+    } finally {
+      setLoginLoading(false);
     }
-    
-    setLoginLoading(false);
   };
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -65,31 +88,43 @@ const Auth = () => {
     
     setRegisterLoading(true);
     
-    const result = await register({
-      full_name: registerName,
-      email: registerEmail,
-      password: registerPassword
-    });
-    
-    if (result.success) {
-      setRegisterSuccess("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
-      setRegisterName("");
-      setRegisterEmail("");
-      setRegisterPassword("");
-      setRegisterConfirmPassword("");
+    try {
+      const response = await fetch('http://localhost:5000/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          full_name: registerName,
+          email: registerEmail,
+          password: registerPassword
+        })
+      });
+
+      const data = await response.json();
       
-      setTimeout(() => {
-        const loginTab = document.querySelector('[value="login"]') as HTMLElement;
-        if (loginTab) {
-          loginTab.click();
-        }
-        setRegisterSuccess("");
-      }, 2000);
-    } else {
-      setRegisterError(result.error || "Erreur lors de l'inscription");
+      if (data.success) {
+        setRegisterSuccess("Compte créé avec succès ! Vous pouvez maintenant vous connecter.");
+        setRegisterName("");
+        setRegisterEmail("");
+        setRegisterPassword("");
+        setRegisterConfirmPassword("");
+        
+        setTimeout(() => {
+          const loginTab = document.querySelector('[value="login"]') as HTMLElement;
+          if (loginTab) {
+            loginTab.click();
+          }
+          setRegisterSuccess("");
+        }, 2000);
+      } else {
+        setRegisterError(data.error || "Erreur lors de l'inscription");
+      }
+    } catch (error) {
+      setRegisterError("Erreur de connexion au serveur");
+    } finally {
+      setRegisterLoading(false);
     }
-    
-    setRegisterLoading(false);
   };
 
   return (
@@ -147,7 +182,12 @@ const Auth = () => {
           padding: 1rem;
         }
 
-      
+        .logo-container img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          filter: brightness(0) invert(1);
+        }
 
         .auth-title {
           color: #2f9e95 !important;
@@ -172,23 +212,20 @@ const Auth = () => {
           gap: 5px !important;
         }
 
-      .auth-tab-trigger {
-  border-radius: 40px !important;
-  font-weight: 600 !important;
-  font-size: 15px !important;
-  padding: 10px !important;
-  color: #666 !important;
-  transition: all 0.3s ease !important;
-  border: none !important;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-
-  width: 100%;   /* important */
-  margin-left:70px;
-}
+        .auth-tab-trigger {
+          border-radius: 40px !important;
+          font-weight: 600 !important;
+          font-size: 15px !important;
+          padding: 10px !important;
+          color: #666 !important;
+          transition: all 0.3s ease !important;
+          border: none !important;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          text-align: center;
+          width: 100% !important;
+        }
 
         .auth-tab-trigger[data-state="active"] {
           background: #2f9e95 !important;
@@ -312,6 +349,25 @@ const Auth = () => {
           text-decoration: underline;
         }
 
+        .back-home {
+          text-align: center;
+          margin-top: 20px;
+          color: #666;
+          text-decoration: none;
+          font-size: 14px;
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+          transition: color 0.3s ease;
+          cursor: pointer;
+          width: 100%;
+          justify-content: center;
+        }
+
+        .back-home:hover {
+          color: #2f9e95;
+        }
+
         /* Style responsive */
         @media (max-width: 480px) {
           .auth-tabs-list {
@@ -325,24 +381,6 @@ const Auth = () => {
           .auth-header {
             padding: 1.5rem 1rem 0.5rem !important;
           }
-           .back-home {
-          text-align: center;
-          margin-top: 20px;
-        }
-          .back-home  {
-          color: var(--text-secondary);
-          text-decoration: none;
-          font-size: 14px;
-          display: inline-flex;
-          align-items: center;
-          gap: 5px;
-          transition: color 0.3s ease;
-        }
-
-        .back-home  {
-          color: var(--primary-color);
-        }
-
         }
         `}
       </style>
@@ -351,10 +389,7 @@ const Auth = () => {
         <Card className="auth-card">
           <CardHeader className="auth-header">
             <div className="logo-container">
-              {/* OPTION 1: Utiliser l'import (recommandé) */}
               <img src="/logo_app.png" alt="MyDiagAI" />
-              
-            
             </div>
             <div>
               <CardTitle className="auth-title">
@@ -369,7 +404,7 @@ const Auth = () => {
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="auth-tabs-list">
                 <TabsTrigger value="login" className="auth-tab-trigger">Connexion</TabsTrigger>
-                
+                <TabsTrigger value="register" className="auth-tab-trigger">Inscription</TabsTrigger>
               </TabsList>
               
               <TabsContent value="login" className="mt-0">
@@ -416,13 +451,89 @@ const Auth = () => {
                   >
                     {loginLoading ? "Connexion..." : "Se connecter"}
                   </Button>
-                   <a className="back-home" onClick={() => navigate('/')} >
-              <span>←</span> Retour à l'accueil
-            </a>
+                  
+                  <a className="back-home" onClick={() => navigate('/')}>
+                    <span>←</span> Retour à l'accueil
+                  </a>
                 </form>
               </TabsContent>
               
-              
+              <TabsContent value="register" className="mt-0">
+                <form onSubmit={handleRegister} className="auth-form">
+                  {registerError && (
+                    <Alert variant="destructive" className="auth-alert destructive">
+                      <AlertDescription>{registerError}</AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {registerSuccess && (
+                    <Alert className="auth-alert success">
+                      <AlertDescription>{registerSuccess}</AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  <div className="form-group">
+                    <Label htmlFor="register-name" className="form-label">Nom complet</Label>
+                    <Input
+                      id="register-name"
+                      type="text"
+                      placeholder="Dr. Jean Dupont"
+                      required
+                      value={registerName}
+                      onChange={(e) => setRegisterName(e.target.value)}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <Label htmlFor="register-email" className="form-label">Email</Label>
+                    <Input
+                      id="register-email"
+                      type="email"
+                      placeholder="votre@email.com"
+                      required
+                      value={registerEmail}
+                      onChange={(e) => setRegisterEmail(e.target.value)}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <Label htmlFor="register-password" className="form-label">Mot de passe</Label>
+                    <Input
+                      id="register-password"
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      value={registerPassword}
+                      onChange={(e) => setRegisterPassword(e.target.value)}
+                      className="form-input"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <Label htmlFor="register-confirm-password" className="form-label">Confirmer le mot de passe</Label>
+                    <Input
+                      id="register-confirm-password"
+                      type="password"
+                      placeholder="••••••••"
+                      required
+                      value={registerConfirmPassword}
+                      onChange={(e) => setRegisterConfirmPassword(e.target.value)}
+                      className="form-input"
+                    />
+                  </div>
+                  
+                  <Button
+                    type="submit"
+                    className="auth-button w-full"
+                    disabled={registerLoading}
+                  >
+                    {registerLoading ? "Inscription..." : "S'inscrire"}
+                  </Button>
+                  
+                  <a className="back-home" onClick={() => navigate('/')}>
+                    <span>←</span> Retour à l'accueil
+                  </a>
+                </form>
+              </TabsContent>
             </Tabs>
           </CardContent>
         </Card>

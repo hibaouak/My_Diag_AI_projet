@@ -1,4 +1,4 @@
-// src/services/api.ts - Version simplifiée sans env
+// src/services/api.ts - Version corrigée avec authentification
 import axios from 'axios';
 
 // URL du backend - À MODIFIER SELON VOTRE ENVIRONNEMENT
@@ -10,6 +10,7 @@ export interface DiagnosisRequest {
   symptoms: string[];
   age: number;
   gender: 'M' | 'F';
+  patient_name?: string;  // ← AJOUTÉ
   additional_notes?: string;
 }
 
@@ -30,10 +31,13 @@ export interface DiagnosisResponse {
     patient_info: {
       age: number;
       gender: string;
+      patient_name?: string;  // ← AJOUTÉ
       symptoms_analyzed: string[];
       additional_notes?: string;
     };
-    disclaimer: string;
+    diagnostic_id?: string;  // ← AJOUTÉ
+    mode?: string;  // ← AJOUTÉ
+    disclaimer?: string;
   };
   results?: Array<{
     disease: string;
@@ -61,13 +65,38 @@ const api = axios.create({
 // Configuration CORS
 api.defaults.withCredentials = false;
 
-// Logging des requêtes
-api.interceptors.request.use(config => {
-  console.log(`🚀 API: ${config.method?.toUpperCase()} ${config.baseURL}${config.url}`);
-  return config;
-});
+// ✅ INTERCEPTEUR POUR AJOUTER LE TOKEN D'AUTHENTIFICATION
+api.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('authToken');
+    
+    // Log de la requête
+    console.log(`🚀 API: ${config.method?.toUpperCase()} ${config.url}`);
+    
+    // Ajouter le token s'il existe
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      console.log(`🔑 Token ajouté: ${token.substring(0, 10)}...`);
+    } else {
+      console.log('⚠️ Pas de token pour cette requête');
+      
+      // Si c'est une route protégée, on peut afficher un avertissement
+      const protectedRoutes = ['/api/dashboard', '/api/diagnose', '/api/stats', '/api/history'];
+      const isProtected = protectedRoutes.some(route => config.url?.includes(route));
+      
+      if (isProtected) {
+        console.warn(`⚠️ Route protégée ${config.url} sans token !`);
+      }
+    }
+    
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
+  }
+);
 
-// Gestion des erreurs
+// ✅ INTERCEPTEUR POUR GÉRER LES ERREURS 401 (Non autorisé)
 api.interceptors.response.use(
   response => {
     console.log(`✅ API ${response.status}: ${response.config.url}`);
@@ -79,6 +108,20 @@ api.interceptors.response.use(
       status: error.response?.status,
       message: error.message
     });
+    
+    // Gestion spécifique des erreurs 401 (token invalide ou expiré)
+    if (error.response?.status === 401) {
+      console.log('❌ Session expirée - Redirection vers login');
+      
+      // Supprimer les données d'authentification
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      
+      // Rediriger vers la page de login si on n'y est pas déjà
+      if (!window.location.pathname.includes('/auth')) {
+        window.location.href = '/auth';
+      }
+    }
     
     // Messages d'erreur conviviaux
     if (error.code === 'ERR_NETWORK') {
@@ -93,8 +136,9 @@ api.interceptors.response.use(
 
 export const checkHealth = async () => {
   try {
+    // Utiliser la route /api/health qui existe maintenant
     const response = await api.get('/api/health');
-    console.log('✅ Backend health:', response.data.status);
+    console.log('✅ Backend health:', response.data);
     return response.data;
   } catch (error) {
     console.error('❌ Backend unreachable');
@@ -160,88 +204,66 @@ export const getDiseases = async () => {
   }
 };
 
-// Fonction performDiagnosis - ajouter un formatage
-// src/services/api.ts - Correction de l'endpoint
-export const performDiagnosis = async (data: DiagnosisRequest): Promise<DiagnosisResponse> => {
+// ✅ VERSION CORRIGÉE DE getDashboardStats
+export const getDashboardStats = async () => {
   try {
-    console.log('📤 Envoi des données de diagnostic:', data);
+    console.log('🏠 Récupération des stats dashboard...');
     
-    // CORRECTION: Changer '/diagnose' en '/api/diagnose'
-    const response = await api.post('/api/diagnose', data); // CHANGER ICI
-    console.log('✅ Réponse API reçue:', response.data);
+    // L'intercepteur ajoutera automatiquement le token
+    const response = await api.get('/api/dashboard');
     
-    // Formatage de la réponse pour assurer la cohérence
-    const formattedResponse = formatDiagnosisResponse(response.data);
-    console.log('🔄 Réponse formatée:', formattedResponse);
-    
-    return formattedResponse;
+    console.log('✅ Dashboard stats reçues:', response.data);
+    return response.data;
   } catch (error) {
-    console.error('❌ Erreur lors du diagnostic:', error);
-    
-    // En cas d'erreur, retourner un format de démonstration cohérent
+    console.error('❌ Erreur dashboard:', error);
     return {
-      success: false,
-      diagnostic_assistant: {
-        results: [
-          {
-            disease: "Common Cold",
-            probability_percent: 78.5,
-            probability_decimal: 0.785,
-            confidence_level: "ÉLEVÉE - Diagnostic plausible",
-            medical_action: "Traitement symptomatique recommandé",
-            specific_guidance: "Repos et hydratation. Surveillance de la température.",
-            suggested_tests: ["Température", "Examen ORL"],
-            risk_level: "Faible",
-            recommendations: [
-              "Repos au lit",
-              "Hydratation abondante",
-              "Antipyrétiques si fièvre > 38.5°C"
-            ]
-          }
-        ],
-        patient_info: {
-          age: data.age,
-          gender: data.gender,
-          symptoms_analyzed: data.symptoms,
-          additional_notes: data.additional_notes
-        },
-        disclaimer: "Mode démonstration - Résultats simulés"
-      }
+      recent_diagnostics: [],
+      top_diseases: [],
+      total_diagnostics: 0,
+      total_patients: 0,
+      accuracy: 0
     };
   }
 };
 
-// Fonction de formatage de la réponse
-const formatDiagnosisResponse = (apiResponse: any): DiagnosisResponse => {
-  // Si l'API retourne déjà le bon format
-  if (apiResponse.diagnostic_assistant || apiResponse.results) {
-    return apiResponse;
-  }
-  
-  // Si l'API retourne un format différent, l'adapter
-  if (apiResponse.diagnosis && Array.isArray(apiResponse.diagnosis)) {
-    return {
-      success: true,
-      diagnostic_assistant: {
-        results: apiResponse.diagnosis.map((item: any) => ({
-          disease: item.disease_name || item.name,
-          probability_percent: item.probability ? item.probability * 100 : 0,
-          probability_decimal: item.probability || 0,
-          confidence_level: item.confidence || "MODÉRÉE",
-          medical_action: item.recommendation || "Consulter un médecin",
-          specific_guidance: item.description || "",
-          suggested_tests: item.tests || [],
-          risk_level: item.severity || "Modéré",
-          recommendations: item.treatment_plan || []
-        })),
-        patient_info: apiResponse.patient_info || {},
-        disclaimer: apiResponse.disclaimer || "Résultats du diagnostic IA"
-      }
+// ✅ VERSION CORRIGÉE - Plus de fallback, on laisse l'erreur remonter
+export const performDiagnosis = async (data: DiagnosisRequest): Promise<DiagnosisResponse> => {
+  try {
+    console.log('📤 Envoi des données de diagnostic:', data);
+    
+    // S'assurer que patient_name est inclus
+    const requestData = {
+      ...data,
+      patient_name: data.patient_name || 'Patient'  // Valeur par défaut
     };
+    
+    const response = await api.post('/api/diagnose', requestData);
+    console.log('✅ Réponse API reçue:', response.data);
+    
+    // La réponse devrait déjà être au bon format depuis le backend
+    return response.data;
+    
+  } catch (error: any) {
+    console.error('❌ Erreur lors du diagnostic:', error);
+    
+    // Vérifier si c'est une erreur 401 (non authentifié)
+    if (error.response?.status === 401) {
+      console.log('🔑 Token invalide - Redirection vers login');
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('user');
+      window.location.href = '/auth';
+      throw new Error('Session expirée');
+    }
+    
+    // Si c'est une erreur 500 (interne du serveur), on affiche l'erreur
+    if (error.response?.status === 500) {
+      console.error('❌ Erreur serveur 500:', error.response.data);
+      throw new Error(error.response.data?.error || 'Erreur interne du serveur');
+    }
+    
+    // En cas d'erreur réseau ou autre, on la remonte
+    throw error;
   }
-  
-  // Retourner la réponse telle quelle
-  return apiResponse;
 };
 
 export default api;

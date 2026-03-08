@@ -1,0 +1,689 @@
+[
+  {
+    "id": "1",
+    "patient_name": "Amira",
+    "age": 30,
+    "gender": "F",
+    "symptoms": [
+      "skin_rash",
+      "chills",
+      "nodal_skin_eruptions",
+      "stomach_pain",
+      "muscle_wasting"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:01:38.067215"
+  },
+  {
+    "id": "2",
+    "patient_name": "Meryem",
+    "age": 20,
+    "gender": "F",
+    "symptoms": [
+      "muscle_wasting",
+      "fatigue",
+      "spotting_ urination",
+      "burning_micturition"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:02:26.614084"
+  },
+  {
+    "id": "3",
+    "patient_name": "Amin",
+    "age": 15,
+    "gender": "M",
+    "symptoms": [
+      "toxic_look_(typhos)",
+      "depression"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:03:32.510450"
+  },
+  {
+    "id": "4",
+    "patient_name": "Hiba",
+    "age": 20,
+    "gender": "F",
+    "symptoms": [
+      "itching",
+      "continuous_sneezing",
+      "shivering",
+      "stomach_pain"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:17:06.993804"
+  },
+  {
+    "id": "5",
+    "patient_name": "Meryem ",
+    "age": 20,
+    "gender": "F",
+    "symptoms": [
+      "itching",
+      "skin_rash"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:23:29.794801"
+  },
+  {
+    "id": "6",
+    "patient_name": "Meryem ",
+    "age": 20,
+    "gender": "F",
+    "symptoms": [
+      "itching",
+      "continuous_sneezing"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:26:51.142018"
+  },
+  {
+    "id": "7",
+    "patient_name": "Souhail ",
+    "age": 28,
+    "gender": "M",
+    "symptoms": [
+      "acne or pimples",
+      "ankle pain",
+      "arm pain",
+      "back pain"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:35:23.031897"
+  },
+  {
+    "id": "8",
+    "patient_name": "Souhail",
+    "age": 28,
+    "gender": "M",
+    "symptoms": [
+      "ankle pain",
+      "acne or pimples",
+      "anxiety and nervousness"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:35:52.487718"
+  },
+  {
+    "id": "9",
+    "patient_name": "Souhail",
+    "age": 28,
+    "gender": "M",
+    "symptoms": [
+      "acne or pimples",
+      "arm pain",
+      "ankle pain",
+      "chills",
+      "back pain"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:36:52.321885"
+  },
+  {
+    "id": "10",
+    "patient_name": "Souhail",
+    "age": 28,
+    "gender": "M",
+    "symptoms": [
+      "acne or pimples",
+      "anxiety and nervousness"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:39:33.265678"
+  },
+  {
+    "id": "11",
+    "patient_name": "Hiba",
+    "age": 20,
+    "gender": "F",
+    "symptoms": [
+      "ankle pain",
+      "acne or pimples",
+      "anxiety and nervousness"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:41:20.159487"
+  },
+  {
+    "id": "12",
+    "patient_name": "Salma OUAHBI",
+    "age": 24,
+    "gender": "F",
+    "symptoms": [
+      "itching",
+      "skin_rash",
+      "chills"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T21:44:20.209260"
+  },
+  {
+    "id": "13",
+    "patient_name": "Salma OUAHBI",
+    "age": 24,
+    "gender": "M",
+    "symptoms": [
+      "itching",
+      "skin_rash",
+      "nodal_skin_eruptions",
+      "continuous_sneezing",
+      "shivering",
+      "chills",
+      "joint_pain",
+      "stomach_pain",
+      "acidity",
+      "ulcers_on_tongue",
+      "muscle_wasting",
+      "vomiting",
+      "burning_micturition",
+      "spotting_ urination",
+      "fatigue",
+      "weight_gain",
+      "anxiety",
+      "cold_hands_and_feets",
+      "mood_swings",
+      "weight_loss",
+      "restlessness",
+      "lethargy",
+      "patches_in_throat",
+      "irregular_sugar_level",
+      "cough",
+      "high_fever",
+      "sunken_eyes",
+      "breathlessness",
+      "sweating",
+      "dehydration",
+      "indigestion",
+      "headache",
+      "yellowish_skin",
+      "dark_urine",
+      "nausea",
+      "loss_of_appetite",
+      "pain_behind_the_eyes",
+      "back_pain",
+      "constipation",
+      "abdominal_pain",
+      "diarrhoea",
+      "mild_fever",
+      "yellow_urine",
+      "yellowing_of_eyes",
+      "acute_liver_failure",
+      "fluid_overload",
+      "swelling_of_stomach",
+      "swelled_lymph_nodes",
+      "malaise",
+      "blurred_and_distorted_vision",
+      "phlegm",
+      "throat_irritation",
+      "redness_of_eyes",
+      "sinus_pressure",
+      "runny_nose",
+      "congestion",
+      "chest_pain",
+      "weakness_in_limbs",
+      "fast_heart_rate",
+      "pain_during_bowel_movements",
+      "pain_in_anal_region",
+      "bloody_stool",
+      "irritation_in_anus",
+      "neck_pain",
+      "dizziness",
+      "cramps",
+      "bruising",
+      "obesity",
+      "swollen_legs",
+      "swollen_blood_vessels",
+      "puffy_face_and_eyes",
+      "enlarged_thyroid",
+      "brittle_nails",
+      "swollen_extremeties",
+      "excessive_hunger",
+      "extra_marital_contacts",
+      "drying_and_tingling_lips",
+      "slurred_speech",
+      "knee_pain",
+      "hip_joint_pain",
+      "muscle_weakness",
+      "stiff_neck",
+      "swelling_joints",
+      "movement_stiffness",
+      "spinning_movements",
+      "loss_of_balance",
+      "unsteadiness",
+      "weakness_of_one_body_side",
+      "loss_of_smell",
+      "bladder_discomfort",
+      "foul_smell_of urine",
+      "continuous_feel_of_urine",
+      "passage_of_gases",
+      "internal_itching",
+      "toxic_look_(typhos)",
+      "depression",
+      "irritability",
+      "muscle_pain",
+      "altered_sensorium",
+      "red_spots_over_body",
+      "belly_pain",
+      "abnormal_menstruation",
+      "dischromic _patches",
+      "watering_from_eyes",
+      "increased_appetite",
+      "polyuria",
+      "family_history",
+      "mucoid_sputum",
+      "rusty_sputum",
+      "lack_of_concentration",
+      "visual_disturbances",
+      "receiving_blood_transfusion",
+      "receiving_unsterile_injections",
+      "coma",
+      "stomach_bleeding",
+      "distention_of_abdomen",
+      "history_of_alcohol_consumption",
+      "fluid_overload.1",
+      "blood_in_sputum",
+      "prominent_veins_on_calf",
+      "palpitations",
+      "painful_walking",
+      "pus_filled_pimples",
+      "blackheads",
+      "scurring",
+      "skin_peeling",
+      "silver_like_dusting",
+      "small_dents_in_nails",
+      "inflammatory_nails",
+      "blister",
+      "red_sore_around_nose",
+      "yellow_crust_ooze"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T22:00:44.776386"
+  },
+  {
+    "id": "14",
+    "patient_name": "Ibtissam",
+    "age": 24,
+    "gender": "F",
+    "symptoms": [
+      "itching",
+      "skin_rash",
+      "continuous_sneezing",
+      "nodal_skin_eruptions"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T22:04:22.757346"
+  },
+  {
+    "id": "15",
+    "patient_name": "Marwa",
+    "age": 22,
+    "gender": "F",
+    "symptoms": [
+      "itching",
+      "skin_rash",
+      "nodal_skin_eruptions",
+      "continuous_sneezing"
+    ],
+    "results": [
+      {
+        "disease": "Common Cold",
+        "probability_percent": 78.5,
+        "probability_decimal": 0.785,
+        "confidence_level": "ÉLEVÉE",
+        "medical_action": "Traitement symptomatique",
+        "specific_guidance": "Repos, hydratation",
+        "suggested_tests": [
+          "Examen clinique"
+        ],
+        "risk_level": "Faible"
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T22:15:04.328323"
+  },
+  {
+    "id": "16",
+    "patient_name": "Imran",
+    "age": 20,
+    "gender": "M",
+    "symptoms": [
+      "itching",
+      "skin_rash",
+      "nodal_skin_eruptions"
+    ],
+    "results": [
+      {
+        "disease": "allergy",
+        "probability_percent": 45.57,
+        "probability_decimal": 0.4557,
+        "confidence_level": "MODÉRÉE",
+        "medical_action": "Consulter un Allergologue",
+        "specific_guidance": "Spécialité recommandée: Allergologue",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines",
+          "Imagerie si nécessaire"
+        ],
+        "risk_level": "Modéré",
+        "recommendations": [
+          "Consultation spécialisée recommandée",
+          "Surveillance des symptômes",
+          "Suivi médical dans les 48h",
+          "Éviter l'automédication"
+        ]
+      },
+      {
+        "disease": "atrophic vaginitis",
+        "probability_percent": 15.81,
+        "probability_decimal": 0.1581,
+        "confidence_level": "FAIBLE",
+        "medical_action": "Diagnostic différentiel à considérer",
+        "specific_guidance": "Spécialité: Gynécologue",
+        "suggested_tests": [
+          "Examen clinique",
+          "Tests spécifiques",
+          "Consultation spécialisée"
+        ],
+        "risk_level": "Faible",
+        "recommendations": [
+          "Surveillance des symptômes",
+          "Examens complémentaires si persistance",
+          "Consultation si aggravation"
+        ]
+      },
+      {
+        "disease": "otitis media",
+        "probability_percent": 8.06,
+        "probability_decimal": 0.0806,
+        "confidence_level": "FAIBLE",
+        "medical_action": "Diagnostic différentiel à considérer",
+        "specific_guidance": "Spécialité: ORL",
+        "suggested_tests": [
+          "Examen clinique",
+          "Tests spécifiques",
+          "Consultation spécialisée"
+        ],
+        "risk_level": "Faible",
+        "recommendations": [
+          "Surveillance des symptômes",
+          "Examens complémentaires si persistance",
+          "Consultation si aggravation"
+        ]
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T22:17:27.297285"
+  },
+  {
+    "id": "17",
+    "patient_name": "Mohamed",
+    "age": 60,
+    "gender": "M",
+    "symptoms": [
+      "continuous_sneezing",
+      "shivering",
+      "acidity",
+      "stomach_pain",
+      "muscle_wasting"
+    ],
+    "results": [
+      {
+        "disease": "allergy",
+        "probability_percent": 45.57,
+        "probability_decimal": 0.4557,
+        "confidence_level": "MODÉRÉE",
+        "medical_action": "Consulter un Allergologue",
+        "specific_guidance": "Spécialité recommandée: Allergologue",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines",
+          "Imagerie si nécessaire"
+        ],
+        "risk_level": "Modéré",
+        "recommendations": [
+          "Consultation spécialisée recommandée",
+          "Surveillance des symptômes",
+          "Suivi médical dans les 48h",
+          "Éviter l'automédication"
+        ]
+      },
+      {
+        "disease": "atrophic vaginitis",
+        "probability_percent": 15.81,
+        "probability_decimal": 0.1581,
+        "confidence_level": "FAIBLE",
+        "medical_action": "Diagnostic différentiel à considérer",
+        "specific_guidance": "Spécialité: Gynécologue",
+        "suggested_tests": [
+          "Examen clinique",
+          "Tests spécifiques",
+          "Consultation spécialisée"
+        ],
+        "risk_level": "Faible",
+        "recommendations": [
+          "Surveillance des symptômes",
+          "Examens complémentaires si persistance",
+          "Consultation si aggravation"
+        ]
+      },
+      {
+        "disease": "otitis media",
+        "probability_percent": 8.06,
+        "probability_decimal": 0.0806,
+        "confidence_level": "FAIBLE",
+        "medical_action": "Diagnostic différentiel à considérer",
+        "specific_guidance": "Spécialité: ORL",
+        "suggested_tests": [
+          "Examen clinique",
+          "Tests spécifiques",
+          "Consultation spécialisée"
+        ],
+        "risk_level": "Faible",
+        "recommendations": [
+          "Surveillance des symptômes",
+          "Examens complémentaires si persistance",
+          "Consultation si aggravation"
+        ]
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-08T22:19:09.306379"
+  }
+]

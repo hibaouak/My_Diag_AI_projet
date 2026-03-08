@@ -33,13 +33,32 @@ export const getStats = async (): Promise<StatsResponse> => {
   }
 };
 
-export const getDashboardStats = async () => {
+// ✅ VERSION CORRIGÉE - Plus de paramètre token
+export const getDashboardStats = async () => {  // ← SUPPRIMER "token: string"
   try {
     console.log('🏠 Récupération des stats dashboard...');
+    
+    // Vérifier que le token existe (optionnel, l'intercepteur le fera)
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      console.log('❌ Pas de token pour dashboard');
+      throw new Error('Non authentifié');
+    }
+    
+    // L'intercepteur dans api.ts ajoutera automatiquement le token
     const response = await api.get('/api/dashboard');
+    
+    console.log('✅ Dashboard stats reçues:', response.data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('❌ Erreur dashboard:', error);
+    
+    // Si erreur 401, on laisse l'intercepteur gérer la redirection
+    if (error.response?.status === 401) {
+      console.log('🔄 Token invalide - Redirection gérée par intercepteur');
+    }
+    
+    // Retourner des données par défaut pour éviter le crash
     return {
       recent_diagnostics: [],
       top_diseases: [],
@@ -48,6 +67,4 @@ export const getDashboardStats = async () => {
       accuracy: 0
     };
   }
-  
-  
 };

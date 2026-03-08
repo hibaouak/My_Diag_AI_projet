@@ -11,40 +11,60 @@ import { toast } from "@/hooks/use-toast";
 import { getDiseases } from "@/services/api";
 import { generateDiagnosticPDF } from "@/lib/pdfGenerator";
 
-
 const Results = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // CORRECTION: Noms des variables pour correspondre à Diagnostic.tsx
+  // Récupération des données de Diagnostic.tsx
   const { 
-    diagnosisResult, // Nom venant de Diagnostic.tsx
-    patientInfo, // Nom venant de Diagnostic.tsx
-    selectedSymptoms, // Nom venant de Diagnostic.tsx
-    isDemo = false // Nom venant de Diagnostic.tsx
+    diagnosisResult, 
+    patientInfo, 
+    selectedSymptoms, 
+    isDemo = false 
   } = location.state || {};
   
   const [availableDiseases, setAvailableDiseases] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [diagnosticData, setDiagnosticData] = useState<any>(null);
+  const [debugInfo, setDebugInfo] = useState<any>(null);
 
-  // Débogage des données reçues
+  // DÉBOGAGE : Afficher les données reçues
   useEffect(() => {
-    console.log("🔍 Données reçues dans Results.tsx:", {
-      locationState: location.state,
-      diagnosisResult,
-      patientInfo,
-      selectedSymptoms,
-      isDemo
-    });
+    console.log("=".repeat(60));
+    console.log("🔍 RESULTS.TSX - DONNÉES REÇUES");
+    console.log("=".repeat(60));
+    console.log("📍 location.state:", location.state);
+    console.log("📍 diagnosisResult:", diagnosisResult);
+    console.log("📍 patientInfo:", patientInfo);
+    console.log("📍 selectedSymptoms:", selectedSymptoms);
+    console.log("📍 isDemo:", isDemo);
     
     if (diagnosisResult) {
-      console.log("📊 Structure complète de diagnosisResult:", diagnosisResult);
-      console.log("📈 Contenu diagnostic_assistant:", diagnosisResult.diagnostic_assistant);
-      console.log("🩺 Résultats disponibles:", diagnosisResult.diagnostic_assistant?.results);
+      console.log("\n📦 STRUCTURE DE diagnosisResult:");
+      console.log("   - success:", diagnosisResult.success);
+      console.log("   - diagnostic_assistant:", diagnosisResult.diagnostic_assistant);
+      console.log("   - results:", diagnosisResult.diagnostic_assistant?.results);
+      console.log("   - patient_info:", diagnosisResult.diagnostic_assistant?.patient_info);
+      
+      if (diagnosisResult.diagnostic_assistant?.results) {
+        console.log(`\n📊 NOMBRE DE RÉSULTATS: ${diagnosisResult.diagnostic_assistant.results.length}`);
+        diagnosisResult.diagnostic_assistant.results.forEach((r: any, i: number) => {
+          console.log(`   ${i+1}. ${r.disease} - ${r.probability_percent}%`);
+        });
+      }
     }
+    console.log("=".repeat(60));
     
-    // Transformer les données pour un affichage cohérent
+    // Sauvegarder pour affichage dans le composant
+    setDebugInfo({
+      hasDiagnosisResult: !!diagnosisResult,
+      hasPatientInfo: !!patientInfo,
+      hasSymptoms: !!(selectedSymptoms && selectedSymptoms.length > 0),
+      resultCount: diagnosisResult?.diagnostic_assistant?.results?.length || 0,
+      firstDisease: diagnosisResult?.diagnostic_assistant?.results?.[0]?.disease || "Aucun"
+    });
+    
+    // Transformer les données
     if (diagnosisResult) {
       const transformed = transformDiagnosticData(diagnosisResult);
       setDiagnosticData(transformed);
@@ -75,8 +95,11 @@ const Results = () => {
   const transformDiagnosticData = (apiData: any) => {
     if (!apiData) return null;
     
-    // Format 1: Réponse API complète avec diagnostic_assistant
+    console.log("🔄 Transformation des données reçues:", apiData);
+    
+    // FORMAT 1: Réponse de votre backend (avec diagnostic_assistant)
     if (apiData.diagnostic_assistant && apiData.diagnostic_assistant.results) {
+      console.log("✅ Format 1 détecté (avec diagnostic_assistant)");
       return {
         results: apiData.diagnostic_assistant.results,
         patient_info: apiData.diagnostic_assistant.patient_info || patientInfo,
@@ -86,8 +109,9 @@ const Results = () => {
       };
     }
     
-    // Format 2: Réponse directe avec results
+    // FORMAT 2: Réponse directe avec results
     if (apiData.results && Array.isArray(apiData.results)) {
+      console.log("✅ Format 2 détecté (results direct)");
       return {
         results: apiData.results,
         patient_info: apiData.patient_info || patientInfo,
@@ -97,8 +121,22 @@ const Results = () => {
       };
     }
     
-    // Format inconnu - utiliser les données de simulation
-    console.warn("Format API non reconnu, utilisation du mode simulation");
+    // FORMAT 3: Réponse avec succès et diagnostic_assistant
+    if (apiData.success && apiData.diagnostic_assistant) {
+      console.log("✅ Format 3 détecté (success + diagnostic_assistant)");
+      return {
+        results: apiData.diagnostic_assistant.results || [],
+        patient_info: apiData.diagnostic_assistant.patient_info || patientInfo,
+        statistics: calculateStatistics(apiData.diagnostic_assistant.results || [], selectedSymptoms),
+        disclaimer: apiData.diagnostic_assistant.disclaimer || "Résultat du diagnostic IA",
+        mode: 'production'
+      };
+    }
+    
+    // Format inconnu
+    console.warn("⚠️ Format API non reconnu, utilisation du mode simulation");
+    console.warn("Données reçues:", apiData);
+    
     return {
       results: [
         {
@@ -164,9 +202,11 @@ const Results = () => {
       return diagnosticData.results;
     }
     
-    // Fallback si diagnosticData n'est pas encore chargé
-    const transformed = transformDiagnosticData(diagnosisResult);
-    return transformed?.results || [];
+    if (diagnosisResult?.diagnostic_assistant?.results) {
+      return diagnosisResult.diagnostic_assistant.results;
+    }
+    
+    return [];
   };
 
   // Obtenir les statistiques
@@ -254,7 +294,6 @@ const Results = () => {
     return translations[gender] || gender || 'Non spécifié';
   };
 
-  // Formater les noms de symptômes
   const formatSymptomName = (symptom: string) => {
     return symptom
       .replace(/_/g, " ")
@@ -266,6 +305,55 @@ const Results = () => {
   return (
     <Layout>
       <div className="max-w-6xl mx-auto space-y-8">
+        {/* BANDEAU DE DÉBOGAGE - À SUPPRIMER PLUS TARD */}
+        <Card className="bg-yellow-50 border-yellow-200">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-yellow-800 text-lg flex items-center gap-2">
+              <AlertCircle className="h-5 w-5" />
+              🔍 INFORMATIONS DE DÉBOGAGE
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="font-semibold">État des données:</p>
+                <ul className="list-disc list-inside mt-1 text-xs">
+                  <li className={diagnosisResult ? "text-green-600" : "text-red-600"}>
+                    diagnosisResult: {diagnosisResult ? "✅ Présent" : "❌ Absent"}
+                  </li>
+                  <li className={patientInfo ? "text-green-600" : "text-red-600"}>
+                    patientInfo: {patientInfo ? "✅ Présent" : "❌ Absent"}
+                  </li>
+                  <li className={selectedSymptoms?.length ? "text-green-600" : "text-amber-600"}>
+                    selectedSymptoms: {selectedSymptoms?.length || 0} symptômes
+                  </li>
+                  <li className={results.length ? "text-green-600" : "text-amber-600"}>
+                    results: {results.length} résultat(s)
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-semibold">Aperçu:</p>
+                <p className="text-xs mt-1 bg-white p-2 rounded">
+                  {results.length > 0 
+                    ? `Premier diagnostic: ${results[0].disease} (${results[0].probability_percent}%)` 
+                    : "Aucun résultat à afficher"}
+                </p>
+              </div>
+            </div>
+            
+            {/* Données brutes (repliables) */}
+            <details className="mt-4">
+              <summary className="cursor-pointer text-sm font-medium text-yellow-700">
+                Voir les données brutes
+              </summary>
+              <pre className="text-xs mt-2 p-2 bg-white rounded overflow-auto max-h-60">
+                {JSON.stringify({ diagnosisResult, patientInfo, selectedSymptoms }, null, 2)}
+              </pre>
+            </details>
+          </CardContent>
+        </Card>
+
         {/* En-tête */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div>
@@ -410,9 +498,12 @@ const Results = () => {
                 <div className="text-center">
                   <AlertCircle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
                   <h3 className="text-xl font-semibold mb-2">Aucun résultat disponible</h3>
-                  <p className="text-muted-foreground">
-                    Aucun diagnostic n'a été généré. Veuillez réessayer.
+                  <p className="text-muted-foreground mb-4">
+                    Aucun diagnostic n'a été généré. Vérifiez les données de débogage ci-dessus.
                   </p>
+                  <Button onClick={() => navigate("/diagnostic")}>
+                    Retour au diagnostic
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -445,7 +536,9 @@ const Results = () => {
                         {result.confidence_level && (
                           <Badge variant="outline" className="flex items-center gap-1">
                             <FileText className="h-3 w-3" />
-                            {result.confidence_level.split(' - ')[0]}
+                            {typeof result.confidence_level === 'string' 
+                              ? result.confidence_level.split(' - ')[0] 
+                              : 'Niveau'}
                           </Badge>
                         )}
                       </div>

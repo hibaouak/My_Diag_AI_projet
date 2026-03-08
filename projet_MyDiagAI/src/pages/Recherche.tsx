@@ -59,12 +59,45 @@ interface SymptomeState {
   [key: string]: boolean;
 }
 
+// Interface pour les résultats de prédiction
+interface PredictionResult {
+  success: boolean;
+  prediction: {
+    disease: string;
+    specialty: string;
+    confidence: number;
+    alternatives?: Array<{
+      maladie: string;
+      probabilite: number;
+      specialite: string;
+    }>;
+  };
+  doctors: Array<{
+    nb_avis: number;
+    id: number;
+    name: string;
+    specialite: string;
+    adresse: string;
+    telephone: string;
+    email: string;
+    ville: string;
+    clinique: string;
+    note: number;
+  }>;
+  symptoms_found: string[];
+}
+
 const SymptomeSearch: React.FC = () => {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSymptomes, setSelectedSymptomes] = useState<SymptomeState>({});
   const [filteredSymptomes, setFilteredSymptomes] = useState(SYMPTOMES);
   const [showFilters, setShowFilters] = useState(false);
+  
+  // États pour la gestion de l'API
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<PredictionResult | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Filtrer les symptômes en fonction de la recherche
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,6 +120,9 @@ const SymptomeSearch: React.FC = () => {
       ...prev,
       [symptome]: !prev[symptome]
     }));
+    // Effacer les résultats précédents quand l'utilisateur modifie sa sélection
+    setResult(null);
+    setError(null);
   };
 
   // Sélectionner tous les symptômes filtrés
@@ -96,11 +132,15 @@ const SymptomeSearch: React.FC = () => {
       newSelected[symptome] = true;
     });
     setSelectedSymptomes(newSelected);
+    setResult(null);
+    setError(null);
   };
 
   // Désélectionner tous les symptômes
   const deselectAll = () => {
     setSelectedSymptomes({});
+    setResult(null);
+    setError(null);
   };
 
   // Sélectionner les symptômes courants
@@ -118,24 +158,65 @@ const SymptomeSearch: React.FC = () => {
       newSelected[symptome] = true;
     });
     setSelectedSymptomes(newSelected);
+    setResult(null);
+    setError(null);
   };
 
   // Compter le nombre de symptômes sélectionnés
   const selectedCount = Object.values(selectedSymptomes).filter(Boolean).length;
 
-  // Soumettre la recherche
-  const handleSubmit = () => {
+  // Soumettre la recherche à l'API
+  const handleSubmit = async () => {
     const selectedList = Object.entries(selectedSymptomes)
       .filter(([_, selected]) => selected)
       .map(([symptome]) => symptome);
     
-    console.log('Symptômes sélectionnés:', selectedList);
+    if (selectedList.length === 0) {
+      setError('Veuillez sélectionner au moins un symptôme');
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
     
-    // Ici vous pouvez envoyer les symptômes à votre API
-    // navigate('/resultats', { state: { symptomes: selectedList } });
-    
-    // Pour l'instant on affiche une alerte
-    alert(`Recherche avec ${selectedCount} symptôme(s) :\n${selectedList.join(', ')}`);
+    try {
+      console.log('📤 Envoi des symptômes:', selectedList);
+      
+      const response = await fetch('http://localhost:5000/api/predict', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ symptoms: selectedList })
+      });
+
+      const data = await response.json();
+      console.log('📥 Réponse reçue:', data);
+
+      if (data.success) {
+        setResult(data);
+      } else {
+        setError(data.error || 'Erreur lors de la prédiction');
+      }
+    } catch (err) {
+      console.error('❌ Erreur:', err);
+      setError('Impossible de se connecter au serveur. Vérifiez que le backend est lancé sur http://192.168.8.105:5000');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Réinitialiser la recherche
+  const handleNewSearch = () => {
+    setResult(null);
+    setError(null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Formater le nom du médecin
+  const formatDoctorName = (name: string) => {
+    if (name.startsWith('Dr. ')) return name;
+    return `Dr. ${name}`;
   };
 
   return (
@@ -162,7 +243,7 @@ const SymptomeSearch: React.FC = () => {
         }
 
         .search-card {
-          max-width: 1000px;
+          max-width: 1200px;
           margin: 0 auto;
           background: white;
           border-radius: 30px;
@@ -451,6 +532,258 @@ const SymptomeSearch: React.FC = () => {
           font-size: 16px;
         }
 
+        /* Styles pour les résultats */
+        .results-section {
+          margin-top: 40px;
+          padding: 30px;
+          background: #f8fbfb;
+          border-radius: 30px;
+          border: 2px solid #eef2f3;
+          animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+
+        .results-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 25px;
+        }
+
+        .results-header h2 {
+          font-size: 22px;
+          color: #333;
+        }
+
+        .new-search-btn {
+          padding: 10px 20px;
+          background: white;
+          border: 2px solid #2f9e95;
+          border-radius: 40px;
+          color: #2f9e95;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .new-search-btn:hover {
+          background: #2f9e95;
+          color: white;
+        }
+
+        .specialty-card {
+          background: white;
+          padding: 25px;
+          border-radius: 20px;
+          margin-bottom: 25px;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+          border: 2px solid transparent;
+          transition: all 0.3s ease;
+        }
+
+        .specialty-card:hover {
+          border-color: #2f9e95;
+          transform: translateY(-5px);
+          box-shadow: 0 15px 30px rgba(47, 158, 149, 0.15);
+        }
+
+        .specialty-title {
+          font-size: 20px;
+          color: #333;
+          margin-bottom: 15px;
+        }
+
+        .specialty-name {
+          font-size: 28px;
+          font-weight: 700;
+          color: #2f9e95;
+          margin-bottom: 10px;
+        }
+
+        .confidence-badge {
+          display: inline-block;
+          background: #e8f3f2;
+          color: #2f9e95;
+          padding: 5px 15px;
+          border-radius: 30px;
+          font-weight: 600;
+          font-size: 14px;
+          margin-bottom: 15px;
+        }
+
+        .disease-name {
+          font-size: 18px;
+          color: #666;
+          margin-bottom: 20px;
+        }
+
+        .alternatives {
+          margin-top: 20px;
+          padding: 20px;
+          background: #f8fbfb;
+          border-radius: 15px;
+        }
+
+        .alternatives h4 {
+          color: #666;
+          font-size: 14px;
+          margin-bottom: 10px;
+        }
+
+        .alternative-item {
+          display: flex;
+          justify-content: space-between;
+          padding: 8px 0;
+          border-bottom: 1px solid #eef2f3;
+        }
+
+        .alternative-item:last-child {
+          border-bottom: none;
+        }
+
+        .alt-disease {
+          color: #333;
+          font-weight: 500;
+        }
+
+        .alt-prob {
+          color: #2f9e95;
+          font-weight: 600;
+        }
+
+        .alt-specialty {
+          color: #666;
+          font-size: 13px;
+        }
+
+        .doctors-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 20px;
+          margin-top: 20px;
+        }
+
+        .doctor-card {
+          background: white;
+          border-radius: 20px;
+          padding: 20px;
+          box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+          border: 2px solid transparent;
+          transition: all 0.3s ease;
+        }
+
+        .doctor-card:hover {
+          border-color: #2f9e95;
+          transform: translateY(-5px);
+          box-shadow: 0 15px 30px rgba(47, 158, 149, 0.15);
+        }
+
+        .doctor-name {
+          font-size: 18px;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 10px;
+        }
+
+        .doctor-specialty {
+          color: #2f9e95;
+          font-weight: 500;
+          margin-bottom: 15px;
+        }
+
+        .doctor-info {
+          margin-bottom: 15px;
+        }
+
+        .info-item {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 5px 0;
+          color: #666;
+          font-size: 14px;
+        }
+
+        .info-icon {
+          font-size: 16px;
+          min-width: 20px;
+        }
+
+        .doctor-rating {
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          color: #ffc107;
+          margin-top: 10px;
+        }
+
+        .rating-number {
+          color: #666;
+          font-size: 14px;
+        }
+
+        .appointment-btn {
+          width: 100%;
+          margin-top: 15px;
+          padding: 12px;
+          background: #2f9e95;
+          color: white;
+          border: none;
+          border-radius: 40px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: all 0.3s ease;
+        }
+
+        .appointment-btn:hover {
+          background: #267a73;
+          transform: translateY(-2px);
+        }
+
+        .no-doctors {
+          text-align: center;
+          padding: 40px;
+          color: #999;
+          font-size: 16px;
+        }
+
+        .error-message {
+          margin-top: 20px;
+          padding: 20px;
+          background: #fff5f5;
+          border: 1px solid #ffcdcd;
+          border-radius: 15px;
+          color: #dc3545;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .loading-spinner {
+          display: inline-block;
+          width: 20px;
+          height: 20px;
+          border: 3px solid #f8fbfb;
+          border-top-color: #2f9e95;
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+          margin-right: 10px;
+        }
+
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+
         .action-buttons {
           display: flex;
           gap: 15px;
@@ -488,6 +821,9 @@ const SymptomeSearch: React.FC = () => {
           cursor: pointer;
           transition: all 0.3s ease;
           box-shadow: 0 5px 15px rgba(47, 158, 149, 0.3);
+          display: flex;
+          align-items: center;
+          gap: 10px;
         }
 
         .submit-btn:hover {
@@ -509,7 +845,7 @@ const SymptomeSearch: React.FC = () => {
           margin-top: 30px;
         }
 
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
           .search-card {
             padding: 20px;
           }
@@ -524,6 +860,10 @@ const SymptomeSearch: React.FC = () => {
           
           .action-buttons {
             flex-direction: column;
+          }
+          
+          .doctors-grid {
+            grid-template-columns: 1fr;
           }
         }
         `}
@@ -541,7 +881,6 @@ const SymptomeSearch: React.FC = () => {
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-dashboard'); }}>Dashboard</a>
               <a href="#" className="nav-link active">Recherche</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/mes-favoris'); }}>Mes médecins</a>
-              
             </div>
 
             <div className="user-profile">
@@ -632,16 +971,127 @@ const SymptomeSearch: React.FC = () => {
               <button 
                 className="submit-btn" 
                 onClick={handleSubmit}
-                disabled={selectedCount === 0}
+                disabled={selectedCount === 0 || loading}
               >
-                Rechercher ({selectedCount})
+                {loading ? (
+                  <>
+                    <span className="loading-spinner"></span>
+                    Analyse en cours...
+                  </>
+                ) : (
+                  `Rechercher (${selectedCount})`
+                )}
               </button>
             </div>
 
-            {/* Note de pied de page */}
-            <div className="footer-note">
-              Sélectionnez vos symptômes pour obtenir des recommandations de médecins
-            </div>
+            {/* Message d'erreur */}
+            {error && (
+              <div className="error-message">
+                <span>⚠️</span>
+                <span>{error}</span>
+              </div>
+            )}
+
+            {/* Résultats de la prédiction */}
+            {result && result.success && (
+              <div className="results-section">
+                <div className="results-header">
+                  <h2>📋 Résultat de l'analyse</h2>
+                  <button className="new-search-btn" onClick={handleNewSearch}>
+                    Nouvelle recherche
+                  </button>
+                </div>
+
+                {/* Carte de la spécialité recommandée */}
+                <div className="specialty-card">
+                  <div className="specialty-title">Spécialité recommandée</div>
+                  <div className="specialty-name">{result.prediction.specialty}</div>
+                  <div className="confidence-badge">
+                    Confiance: {result.prediction.confidence}%
+                  </div>
+                  <div className="disease-name">
+                    Maladie probable: {result.prediction.disease}
+                  </div>
+
+                  {/* Symptômes identifiés */}
+                  {result.symptoms_found && result.symptoms_found.length > 0 && (
+                    <div style={{ marginTop: '15px', color: '#666' }}>
+                      <strong>Symptômes analysés:</strong>{' '}
+                      {result.symptoms_found.join(', ')}
+                    </div>
+                  )}
+
+                  {/* Autres possibilités */}
+                  {result.prediction.alternatives && result.prediction.alternatives.length > 0 && (
+                    <div className="alternatives">
+                      <h4>Autres possibilités:</h4>
+                      {result.prediction.alternatives.map((alt, index) => (
+                        <div key={index} className="alternative-item">
+                          <span className="alt-disease">{alt.maladie}</span>
+                          <span>
+                            <span className="alt-prob">
+                              {Math.round(alt.probabilite * 100)}%
+                            </span>
+                            <span className="alt-specialty"> ({alt.specialite})</span>
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Liste des médecins */}
+                <h3 style={{ marginBottom: '20px', color: '#333' }}>
+                  👨‍⚕️ Médecins disponibles ({result.doctors?.length || 0})
+                </h3>
+
+                {result.doctors && result.doctors.length > 0 ? (
+                  <div className="doctors-grid">
+                    {result.doctors.map((doctor) => (
+                      <div key={doctor.id} className="doctor-card">
+                        <div className="doctor-name">{formatDoctorName(doctor.name)}</div>
+                        <div className="doctor-specialty">{doctor.specialite}</div>
+                        
+                        <div className="doctor-info">
+                          <div className="info-item">
+                            <span className="info-icon">📍</span>
+                            <span>{doctor.adresse}, {doctor.ville}</span>
+                          </div>
+                          <div className="info-item">
+                            <span className="info-icon">🏥</span>
+                            <span>{doctor.clinique}</span>
+                          </div>
+                          <div className="info-item">
+                            <span className="info-icon">📞</span>
+                            <span>{doctor.telephone}</span>
+                          </div>
+                          <div className="info-item">
+                            <span className="info-icon">✉️</span>
+                            <span style={{ fontSize: '13px' }}>{doctor.email}</span>
+                          </div>
+                        </div>
+
+                        {doctor.note && (
+                          <div className="doctor-rating">
+                            <span>⭐</span>
+                            <span>{doctor.note}/5</span>
+                            <span className="rating-number">({doctor.nb_avis || 0} avis)</span>
+                          </div>
+                        )}
+
+                        <button className="appointment-btn">
+                          Prendre rendez-vous
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="no-doctors">
+                    Aucun médecin disponible pour cette spécialité pour le moment.
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
       </div>

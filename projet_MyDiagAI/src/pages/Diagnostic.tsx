@@ -13,6 +13,60 @@ import { Loader2, AlertCircle, ArrowLeft, Stethoscope, CheckCircle2 } from "luci
 import { getSymptoms, performDiagnosis, checkHealth } from "@/services/api";
 import { toast } from "@/components/ui/use-toast";
 
+// ✅ LISTE EXACTE DES 50 SYMPTÔMES DU MODÈLE (en cas de fallback)
+const FALLBACK_SYMPTOMS = [
+  "anxiety and nervousness",
+  "depression",
+  "shortness of breath",
+  "sharp chest pain",
+  "dizziness",
+  "insomnia",
+  "palpitations",
+  "irregular heartbeat",
+  "breathing fast",
+  "hoarse voice",
+  "sore throat",
+  "difficulty speaking",
+  "cough",
+  "nasal congestion",
+  "throat swelling",
+  "difficulty in swallowing",
+  "vomiting",
+  "headache",
+  "nausea",
+  "diarrhea",
+  "painful urination",
+  "frequent urination",
+  "blood in urine",
+  "hand or finger pain",
+  "arm pain",
+  "back pain",
+  "neck pain",
+  "low back pain",
+  "knee pain",
+  "foot or toe pain",
+  "ankle pain",
+  "joint pain",
+  "muscle pain",
+  "muscle stiffness or tightness",
+  "fatigue",
+  "fever",
+  "chills",
+  "weight gain",
+  "recent weight loss",
+  "decreased appetite",
+  "excessive appetite",
+  "swollen lymph nodes",
+  "skin rash",
+  "skin lesion",
+  "acne or pimples",
+  "mouth ulcer",
+  "eye redness",
+  "diminished vision",
+  "double vision",
+  "seizures"
+].sort();
+
 const Diagnostic = () => {
   const navigate = useNavigate();
   
@@ -25,8 +79,10 @@ const Diagnostic = () => {
   });
   
   // État pour les symptômes
-  const [symptomsList, setSymptomsList] = useState<string[]>([]);
+  const [symptomsList, setSymptomsList] = useState<string[]>(FALLBACK_SYMPTOMS);
+  const [filteredSymptoms, setFilteredSymptoms] = useState<string[]>(FALLBACK_SYMPTOMS);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
   
   // États pour le chargement et les erreurs
   const [loadingSymptoms, setLoadingSymptoms] = useState(true);
@@ -49,12 +105,6 @@ const Diagnostic = () => {
         console.error("❌ Backend non accessible:", err);
         setBackendStatus("error");
         setError("Le serveur backend n'est pas accessible. Mode démonstration activé.");
-        
-        toast({
-          title: "Mode démonstration",
-          description: "Connexion au backend échouée. Utilisation des données de démonstration.",
-          variant: "destructive",
-        });
       }
     };
 
@@ -70,68 +120,41 @@ const Diagnostic = () => {
         
         console.log("🔄 Chargement des symptômes...");
         
-        // Attendre d'abord que le statut du backend soit vérifié
         if (backendStatus === "checking") {
           return;
         }
         
         if (backendStatus === "connected") {
-          // Mode normal: charger depuis l'API
           const symptomsData = await getSymptoms();
-          console.log("📦 Données reçues:", symptomsData);
+          console.log("📦 Données reçues de l'API:", symptomsData);
           
-          // S'assurer que nous avons un tableau
           let symptomsArray: string[] = [];
           
           if (Array.isArray(symptomsData)) {
             symptomsArray = symptomsData;
           } else if (symptomsData && symptomsData.symptoms && Array.isArray(symptomsData.symptoms)) {
             symptomsArray = symptomsData.symptoms;
-          } else if (symptomsData && typeof symptomsData === 'object') {
-            // Essayer de trouver un tableau dans l'objet
-            const possibleArrays = Object.values(symptomsData).filter(val => Array.isArray(val));
-            if (possibleArrays.length > 0) {
-              symptomsArray = possibleArrays[0] as string[];
-            }
           }
           
-          // Filtrer les doublons et valeurs vides
           symptomsArray = [...new Set(symptomsArray.filter(s => s && s.trim()))];
           
           if (symptomsArray.length > 0) {
-            console.log(`✅ ${symptomsArray.length} symptômes uniques chargés`);
+            console.log(`✅ ${symptomsArray.length} symptômes chargés depuis l'API`);
             setSymptomsList(symptomsArray);
+            setFilteredSymptoms(symptomsArray);
           } else {
             throw new Error("Aucun symptôme valide retourné");
           }
         } else {
-          // Mode démonstration: symptômes de secours
-          console.log("⚠️ Utilisation des symptômes de démonstration");
-          const demoSymptoms = [
-            "itching", "skin_rash", "nodal_skin_eruptions", "continuous_sneezing", "shivering",
-            "chills", "joint_pain", "stomach_pain", "acidity", "ulcers_on_tongue",
-            "muscle_wasting", "vomiting", "burning_micturition", "fatigue", "cough",
-            "high_fever", "headache", "nausea", "loss_of_appetite", "back_pain",
-            "constipation", "abdominal_pain", "diarrhoea", "mild_fever", "redness_of_eyes",
-            "sinus_pressure", "runny_nose", "congestion", "chest_pain", "shortness_of_breath"
-          ];
-          setSymptomsList(demoSymptoms);
+          console.log("⚠️ Utilisation de la liste de secours (50 symptômes)");
+          setSymptomsList(FALLBACK_SYMPTOMS);
+          setFilteredSymptoms(FALLBACK_SYMPTOMS);
         }
       } catch (err) {
         console.error("❌ Erreur lors du chargement des symptômes:", err);
-        
-        // Symptômes de secours
-        const fallbackSymptoms = [
-          "itching", "skin_rash", "cough", "headache", "fever",
-          "fatigue", "nausea", "vomiting", "diarrhoea", "back_pain"
-        ];
-        setSymptomsList(fallbackSymptoms);
-        
-        toast({
-          title: "Données limitées",
-          description: "Chargement des symptômes partiel. Certaines données peuvent être manquantes.",
-          variant: "destructive",
-        });
+        console.log("⚠️ Utilisation de la liste de secours (50 symptômes)");
+        setSymptomsList(FALLBACK_SYMPTOMS);
+        setFilteredSymptoms(FALLBACK_SYMPTOMS);
       } finally {
         setLoadingSymptoms(false);
       }
@@ -139,6 +162,21 @@ const Diagnostic = () => {
 
     loadSymptoms();
   }, [backendStatus]);
+
+  // Filtrer les symptômes en fonction de la recherche
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const term = e.target.value.toLowerCase();
+    setSearchTerm(term);
+    
+    if (term === '') {
+      setFilteredSymptoms(symptomsList);
+    } else {
+      const filtered = symptomsList.filter(symptom => 
+        symptom.toLowerCase().includes(term)
+      );
+      setFilteredSymptoms(filtered);
+    }
+  };
 
   // Gestion des changements dans les informations du patient
   const handlePatientInfoChange = (field: keyof typeof patientInfo, value: string) => {
@@ -159,9 +197,18 @@ const Diagnostic = () => {
     });
   };
 
+  // Sélectionner tous les symptômes filtrés
+  const selectAllFiltered = () => {
+    setSelectedSymptoms(filteredSymptoms);
+  };
+
+  // Désélectionner tous les symptômes
+  const deselectAll = () => {
+    setSelectedSymptoms([]);
+  };
+
   // Valider les informations du patient
   const validatePatientInfo = () => {
-    // Validation du nom
     if (!patientInfo.name.trim()) {
       toast({
         title: "Nom manquant",
@@ -171,7 +218,6 @@ const Diagnostic = () => {
       return false;
     }
     
-    // Validation de l'âge
     const age = parseInt(patientInfo.age);
     if (isNaN(age) || age < 1 || age > 120) {
       toast({
@@ -182,7 +228,6 @@ const Diagnostic = () => {
       return false;
     }
     
-    // Validation du genre
     if (!patientInfo.gender) {
       toast({
         title: "Genre manquant",
@@ -203,7 +248,6 @@ const Diagnostic = () => {
     if (validatePatientInfo()) {
       console.log("✅ Validation réussie, passage à l'étape 2");
       setStep("symptoms");
-      // Forcer le scroll vers le haut
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       console.log("❌ Validation échouée");
@@ -216,112 +260,57 @@ const Diagnostic = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
- // Dans la fonction handleDiagnose() de Diagnostic.tsx
-const handleDiagnose = async () => {
-  console.log("🎯 Clic sur 'Analyse avec l'IA'");
-  console.log("📋 Symptômes sélectionnés:", selectedSymptoms);
-  
-  if (selectedSymptoms.length === 0) {
-    toast({
-      title: "Symptômes manquants",
-      description: "Veuillez sélectionner au moins un symptôme",
-      variant: "destructive",
-    });
-    return;
-  }
-
-  try {
-    setLoadingDiagnosis(true);
+  // Fonction de diagnostic
+  const handleDiagnose = async () => {
+    console.log("🎯 Clic sur 'Analyse avec l'IA'");
+    console.log("📋 Symptômes sélectionnés:", selectedSymptoms);
     
-    // Préparer les données pour l'API - AJOUTER patient_name
-    const diagnosisData = {
-      patient_name: patientInfo.name, // AJOUTER CE CHAMP
-      symptoms: selectedSymptoms,
-      age: parseInt(patientInfo.age),
-      gender: patientInfo.gender as "M" | "F",
-      additional_notes: patientInfo.notes
-    };
-
-    console.log("📤 Envoi des données au backend:", diagnosisData);
-    
-    let result;
-    
-    if (backendStatus === "connected") {
-      // Mode normal: appeler l'API
-      result = await performDiagnosis(diagnosisData);
-      console.log("✅ Diagnostic reçu depuis l'API:", result);
-    } else {
-      // Mode démonstration
-      result = {
-        success: true,
-        diagnostic_assistant: {
-          results: [
-            {
-              disease: "Common Cold",
-              probability_percent: 78.5,
-              probability_decimal: 0.785,
-              confidence_level: "ÉLEVÉE - Diagnostic plausible",
-              medical_action: "Traitement symptomatique recommandé",
-              specific_guidance: "Repos et hydratation. Surveillance de la température.",
-              suggested_tests: ["Température", "Examen ORL"],
-              risk_level: "Faible",
-              recommendations: [
-                "Repos au lit",
-                "Hydratation abondante",
-                "Antipyrétiques si fièvre > 38.5°C"
-              ]
-            },
-            {
-              disease: "Seasonal Allergy",
-              probability_percent: 45.2,
-              probability_decimal: 0.452,
-              confidence_level: "MODÉRÉE - Hypothèse à explorer",
-              medical_action: "Considérer dans le diagnostic différentiel",
-              specific_guidance: "Antihistaminiques si nécessaire. Éviction des allergènes.",
-              suggested_tests: ["Tests allergiques", "Examen ORL"],
-              risk_level: "Faible",
-              recommendations: [
-                "Éviter les allergènes connus",
-                "Antihistaminiques si symptômes",
-                "Nettoyage nasal"
-              ]
-            }
-          ],
-          patient_info: {
-            patient_name: patientInfo.name, // AJOUTER ICI
-            age: parseInt(patientInfo.age),
-            gender: patientInfo.gender,
-            symptoms_analyzed: selectedSymptoms,
-            additional_notes: patientInfo.notes
-          },
-          disclaimer: "Résultat de démonstration - Diagnostic simulé"
-        }
-      };
-      console.log("⚠️ Diagnostic simulé (backend non disponible)");
+    if (selectedSymptoms.length === 0) {
+      toast({
+        title: "Symptômes manquants",
+        description: "Veuillez sélectionner au moins un symptôme",
+        variant: "destructive",
+      });
+      return;
     }
-    
-    // Naviguer vers la page des résultats avec les bonnes clés
-    navigate("/results", { 
-      state: { 
-        diagnosisResult: result, // Clé importante
-        patientInfo: patientInfo, // Clé importante
-        selectedSymptoms: selectedSymptoms, // Clé importante
-        isDemo: backendStatus !== "connected" // Clé importante
-      } 
-    });
-    
-  } catch (err) {
-    console.error("❌ Erreur lors du diagnostic:", err);
-    
-    toast({
-      title: "Erreur de diagnostic",
-      description: "Une erreur est survenue lors de l'analyse. Veuillez réessayer.",
-      variant: "destructive",
-    });
-  } finally {
-    setLoadingDiagnosis(false);
-  }
-};
+
+    try {
+      setLoadingDiagnosis(true);
+      
+      // Préparer les données pour l'API
+      const diagnosisData = {
+        patient_name: patientInfo.name,
+        symptoms: selectedSymptoms,
+        age: parseInt(patientInfo.age),
+        gender: patientInfo.gender as "M" | "F",
+        additional_notes: patientInfo.notes
+      };
+
+      console.log("📤 Envoi des données au backend:", diagnosisData);
+      
+      const result = await performDiagnosis(diagnosisData);
+      console.log("✅ Diagnostic reçu:", result);
+      
+      navigate("/results", { 
+        state: { 
+          diagnosisResult: result,
+          patientInfo: patientInfo,
+          selectedSymptoms: selectedSymptoms,
+          isDemo: backendStatus !== "connected"
+        } 
+      });
+      
+    } catch (err: any) {
+      console.error("❌ Erreur lors du diagnostic:", err);
+      toast({
+        title: "Erreur de diagnostic",
+        description: err.message || "Une erreur est survenue lors de l'analyse",
+        variant: "destructive",
+      });
+    } finally {
+      setLoadingDiagnosis(false);
+    }
+  };
 
   // Formater le nom des symptômes pour l'affichage
   const formatSymptomName = (symptom: string) => {
@@ -331,6 +320,9 @@ const handleDiagnose = async () => {
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
   };
+
+  // Compter le nombre de symptômes sélectionnés
+  const selectedCount = selectedSymptoms.length;
 
   // Rendu de l'étape "Informations patient"
   const renderPatientInfoStep = () => (
@@ -526,23 +518,44 @@ const handleDiagnose = async () => {
             </div>
           ) : (
             <>
-              {/* Recherche de symptômes */}
+              {/* Barre de recherche */}
               <div className="relative">
                 <Input
                   placeholder="Rechercher un symptôme..."
                   className="pl-10 h-12"
-                  onChange={(e) => {
-                    const searchTerm = e.target.value.toLowerCase();
-                    // Note: Dans une version complète, on filtrerait ici
-                  }}
+                  value={searchTerm}
+                  onChange={handleSearch}
                 />
                 <Stethoscope className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
+              </div>
+
+              {/* Actions rapides */}
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={selectAllFiltered}
+                >
+                  Tout sélectionner
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={deselectAll}
+                >
+                  Tout désélectionner
+                </Button>
+              </div>
+
+              {/* Compteur */}
+              <div className="text-sm text-muted-foreground">
+                {filteredSymptoms.length} symptômes trouvés • {selectedCount} sélectionnés
               </div>
 
               {/* Liste des symptômes */}
               <div className="max-h-[500px] overflow-y-auto rounded-lg border p-4">
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-                  {symptomsList.map((symptom, index) => (
+                  {filteredSymptoms.map((symptom, index) => (
                     <div
                       key={index}
                       className={`flex items-start space-x-3 rounded-lg border p-3 transition-all hover:shadow-md cursor-pointer ${
@@ -567,71 +580,6 @@ const handleDiagnose = async () => {
                     </div>
                   ))}
                 </div>
-              </div>
-
-              {/* Panneau de résumé */}
-              <div className="rounded-lg bg-gradient-to-r from-primary/5 to-primary/10 p-5 border">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2">
-                    <Stethoscope className="h-5 w-5 text-primary" />
-                    <h4 className="font-semibold text-lg">Résumé de sélection</h4>
-                  </div>
-                  <div className="px-3 py-1 bg-primary/20 rounded-full">
-                    <span className="text-sm font-semibold">
-                      {selectedSymptoms.length} sélectionné(s)
-                    </span>
-                  </div>
-                </div>
-
-                {selectedSymptoms.length === 0 ? (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>
-                      <span className="font-semibold">Aucun symptôme sélectionné</span>
-                      <br />
-                      Veuillez sélectionner au moins un symptôme pour continuer
-                    </AlertDescription>
-                  </Alert>
-                ) : (
-                  <>
-                    <p className="text-sm mb-3">
-                      <span className="font-semibold">{selectedSymptoms.length}</span> symptôme(s) sélectionné(s)
-                    </p>
-                    
-                    <div className="mb-4">
-                      <p className="text-sm font-semibold mb-2">Symptômes choisis :</p>
-                      <div className="flex flex-wrap gap-2">
-                        {selectedSymptoms.slice(0, 10).map((symptom, index) => (
-                          <div
-                            key={index}
-                            className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1.5 text-sm"
-                          >
-                            <span>{formatSymptomName(symptom)}</span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleSymptomToggle(symptom);
-                              }}
-                              className="ml-1 text-muted-foreground hover:text-foreground"
-                            >
-                              ×
-                            </button>
-                          </div>
-                        ))}
-                        {selectedSymptoms.length > 10 && (
-                          <div className="inline-flex items-center rounded-full bg-muted px-3 py-1.5 text-sm">
-                            +{selectedSymptoms.length - 10} autres
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <p className="text-xs text-muted-foreground">
-                      ⚠️ Sélectionnez les symptômes principaux pour une analyse précise. Maximum 10 recommandés.
-                    </p>
-                  </>
-                )}
               </div>
             </>
           )}
@@ -660,7 +608,7 @@ const handleDiagnose = async () => {
                 </>
               ) : (
                 <>
-                  Lancer l'analyse IA
+                  Lancer l'analyse IA ({selectedCount})
                   <Stethoscope className="h-5 w-5" />
                 </>
               )}
@@ -668,31 +616,6 @@ const handleDiagnose = async () => {
           </div>
         </CardContent>
       </Card>
-
-      {/* Informations de débogage */}
-      <div className="p-4 border rounded-lg bg-muted/30">
-        <p className="text-sm font-semibold mb-2">🔍 Informations système :</p>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div>
-            <span className="font-medium">Symptômes disponibles :</span>{" "}
-            {symptomsList.length}
-          </div>
-          <div>
-            <span className="font-medium">Symptômes sélectionnés :</span>{" "}
-            {selectedSymptoms.length}
-          </div>
-          <div>
-            <span className="font-medium">Backend :</span>{" "}
-            {backendStatus === "checking" && "🔄 Vérification..."}
-            {backendStatus === "connected" && "✅ Connecté"}
-            {backendStatus === "error" && "❌ Non disponible"}
-          </div>
-          <div>
-            <span className="font-medium">Mode :</span>{" "}
-            {backendStatus === "connected" ? "Production" : "Démonstration"}
-          </div>
-        </div>
-      </div>
     </div>
   );
 
