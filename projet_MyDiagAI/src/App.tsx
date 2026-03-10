@@ -18,6 +18,8 @@ import PatientDashboard from "@/pages/patient-dashboard";
 import Recherche from "@/pages/Recherche";
 import AuthPatient from "./pages/Auth-patient";
 import About from "./pages/About";
+import History from "./pages/History";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -63,6 +65,7 @@ const App = () => (
                 <Diagnostic />
               </ProtectedRoute>
             } />
+            <Route path="/history" element={<History />} />
             
             <Route path="/results" element={
               <ProtectedRoute>

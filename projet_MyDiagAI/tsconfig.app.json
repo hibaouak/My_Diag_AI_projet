@@ -20,6 +20,8 @@
     "noUnusedParameters": false,
     "noImplicitAny": false,
     "noFallthroughCasesInSwitch": false,
+    "types": ["vite/client"] ,  // <-- Ajoutez cette ligne
+
 
     "baseUrl": ".",
     "paths": {

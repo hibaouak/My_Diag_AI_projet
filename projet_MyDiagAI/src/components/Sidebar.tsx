@@ -6,6 +6,7 @@ import logo from "@/assets/mydiagai-logo.png";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/dashboard" },
   { icon: Activity, label: "Diagnostic", path: "/diagnostic" },
+  { icon: History, label: "Historique", path: "/history" }, 
   { icon: BarChart3, label: "Statistiques", path: "/statistics" },
   { icon: Settings, label: "Paramètres", path: "/settings" },
 ];
