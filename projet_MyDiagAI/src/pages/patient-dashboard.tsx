@@ -688,7 +688,7 @@ const PatientDashboard: React.FC = () => {
             </div>
 
             {/* Stats Cards */}
-            <div className="stats-grid">
+          <div className="stats-grid">
               <div className="stat-card">
                 <div className="stat-number">{stats.consultations}</div>
                 <div className="stat-label">Total effectués</div>
