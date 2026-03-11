@@ -1,5 +1,5 @@
 //src/pages/patient-dashboard.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface DoctorSearch {
@@ -31,9 +31,32 @@ interface Stats {
   lastDiagnostic: string;
 }
 
+// Interface pour les statistiques de recherche
+interface SearchStats {
+  total_searches: number;
+  top_specialties: Array<{
+    specialty: string;
+    count: number;
+    percentage: number;
+  }>;
+  average_confidence: number;
+  recent_searches: Array<{
+    specialty: string;
+    disease: string;
+    date: string;
+    confidence: number;
+  }>;
+}
+
 const PatientDashboard: React.FC = () => {
   const navigate = useNavigate();
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
+  const [searchStats, setSearchStats] = useState<SearchStats>({
+    total_searches: 0,
+    top_specialties: [],
+    average_confidence: 0,
+    recent_searches: []
+  });
   
   const [user] = useState<UserInfo>({
     firstName: 'Jade',
@@ -42,6 +65,32 @@ const PatientDashboard: React.FC = () => {
     location: 'Antibes, 06',
     avatar: 'JD'
   });
+
+  // Charger les statistiques depuis le localStorage
+  useEffect(() => {
+    loadSearchStats();
+  }, []);
+
+  const loadSearchStats = () => {
+    try {
+      const saved = localStorage.getItem('patientSearchStats');
+      if (saved) {
+        setSearchStats(JSON.parse(saved));
+      } else {
+        // Stats par défaut
+        const defaultStats = {
+          total_searches: 0,
+          top_specialties: [],
+          average_confidence: 0,
+          recent_searches: []
+        };
+        setSearchStats(defaultStats);
+        localStorage.setItem('patientSearchStats', JSON.stringify(defaultStats));
+      }
+    } catch (error) {
+      console.error('Erreur chargement stats:', error);
+    }
+  };
 
   const [recentSearches] = useState<DoctorSearch[]>([
     {
@@ -77,13 +126,13 @@ const PatientDashboard: React.FC = () => {
 
   const handleNewSearch = () => {
     console.log('Nouvelle recherche');
-    navigate('/recherche-medecins');
+    navigate('/Recherche');
   };
 
   const handleViewStats = (e: React.MouseEvent) => {
     e.preventDefault();
     console.log('Voir les statistiques');
-    navigate('/statistiques');
+    navigate('/Statistics-patient');
   };
 
   const handleRefresh = () => {
@@ -93,6 +142,19 @@ const PatientDashboard: React.FC = () => {
 
   const handleLogout = () => {
     navigate('/');
+  };
+
+  const handleResetStats = () => {
+    if (window.confirm('Voulez-vous réinitialiser toutes vos statistiques de recherche ?')) {
+      const defaultStats = {
+        total_searches: 0,
+        top_specialties: [],
+        average_confidence: 0,
+        recent_searches: []
+      };
+      setSearchStats(defaultStats);
+      localStorage.setItem('patientSearchStats', JSON.stringify(defaultStats));
+    }
   };
 
   return (
@@ -317,8 +379,165 @@ const PatientDashboard: React.FC = () => {
           text-decoration: underline;
         }
 
-        /* Stats grid */
+        /* Search Stats Section - MODIFIÉ EN BLANC */
+        .search-stats-section {
+          background: white;
+          border-radius: 20px;
+          padding: 30px;
+          margin-bottom: 40px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+          border: 2px solid #eef2f3;
+        }
+
+        .stats-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 25px;
+        }
+
+        .stats-header h2 {
+          font-size: 22px;
+          color: #333;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }
+
+        .reset-stats-btn {
+          background: #f8fbfb;
+          border: 2px solid #eef2f3;
+          color: #2f9e95;
+          padding: 8px 16px;
+          border-radius: 30px;
+          font-size: 14px;
+          font-weight: 600;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          transition: all 0.3s ease;
+        }
+
+        .reset-stats-btn:hover {
+          background: #2f9e95;
+          color: white;
+          border-color: #2f9e95;
+          transform: translateY(-2px);
+        }
+
         .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+          margin-bottom: 25px;
+        }
+
+        .stat-item {
+          background: #f8fbfb;
+          border-radius: 15px;
+          padding: 25px 20px;
+          text-align: center;
+          border: 2px solid #eef2f3;
+          transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+          transform: translateY(-5px);
+          border-color: #2f9e95;
+          box-shadow: 0 10px 20px rgba(47, 158, 149, 0.1);
+        }
+
+        .stat-value {
+          font-size: 36px;
+          font-weight: 700;
+          color: #2f9e95;
+          margin-bottom: 8px;
+        }
+
+        .stat-label {
+          font-size: 14px;
+          color: #666;
+          font-weight: 500;
+        }
+
+        .top-specialties {
+          background: #f8fbfb;
+          border-radius: 15px;
+          padding: 20px;
+          border: 2px solid #eef2f3;
+        }
+
+        .top-specialties h3 {
+          font-size: 18px;
+          color: #333;
+          margin-bottom: 15px;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .specialty-item {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 12px 0;
+          border-bottom: 1px solid #eef2f3;
+        }
+
+        .specialty-item:last-child {
+          border-bottom: none;
+        }
+
+        .specialty-name {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+
+        .specialty-rank {
+          width: 26px;
+          height: 26px;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 13px;
+          font-weight: 600;
+        }
+
+        .rank-1 {
+          background: #ffd700;
+          color: #333;
+        }
+
+        .rank-2 {
+          background: #c0c0c0;
+          color: #333;
+        }
+
+        .rank-3 {
+          background: #cd7f32;
+          color: #333;
+        }
+
+        .rank-other {
+          background: #eef2f3;
+          color: #666;
+        }
+
+        .specialty-count {
+          background: white;
+          color: #2f9e95;
+          padding: 4px 12px;
+          border-radius: 30px;
+          font-size: 13px;
+          font-weight: 600;
+          border: 2px solid #eef2f3;
+        }
+
+        /* Stats grid original */
+        .original-stats-grid {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
           gap: 25px;
@@ -601,7 +820,8 @@ const PatientDashboard: React.FC = () => {
             flex-wrap: wrap;
           }
           
-          .stats-grid {
+          .stats-grid,
+          .original-stats-grid {
             grid-template-columns: repeat(2, 1fr);
           }
           
@@ -615,7 +835,8 @@ const PatientDashboard: React.FC = () => {
             padding: 20px;
           }
           
-          .stats-grid {
+          .stats-grid,
+          .original-stats-grid {
             grid-template-columns: 1fr;
           }
           
@@ -640,15 +861,13 @@ const PatientDashboard: React.FC = () => {
           <nav className="navbar">
             <div className="logo">
               <img src="./public/logo_app.png" alt="" className="logoapp"/>
-              
-              
             </div>
             
             <div className="nav-links">
               <a href="#" className="nav-link active">Dashboard</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>Recherche</a>
-                <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-history'); }}>Historique</a>
-              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/statistiques'); }}>Statistiques</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-history'); }}>Historique</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Statistics-patient'); }}>Statistiques</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Settings-patient'); }}>Paramètres</a>
             </div>
 
@@ -679,8 +898,8 @@ const PatientDashboard: React.FC = () => {
               <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
                 <button 
                   className="new-diagnostic-btn" 
-                  onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>
-            
+                  onClick={handleNewSearch}
+                >
                   <span>+</span> Nouvelle recherche
                 </button>
                 <a href="#" className="view-stats-link" onClick={handleViewStats}>
@@ -689,31 +908,70 @@ const PatientDashboard: React.FC = () => {
               </div>
             </div>
 
-            {/* Stats Cards */}
-          <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-number">{stats.consultations}</div>
-                <div className="stat-label">Total effectués</div>
-                <div className="stat-detail">{stats.consultationsThisMonth} ce mois</div>
+            {/* SECTION STATISTIQUES DE RECHERCHE - DESIGN BLANC */}
+            <div className="search-stats-section">
+              <div className="stats-header">
+                <h2>
+                  <span>📊</span> Vos statistiques de recherche
+                </h2>
+                <button className="reset-stats-btn" onClick={handleResetStats}>
+                  <span>🔄</span> Réinitialiser
+                </button>
               </div>
 
-              <div className="stat-card">
-                <div className="stat-number">{stats.doctorsContacted}</div>
-                <div className="stat-label">Médecins contactés</div>
-                <div className="stat-detail">{stats.activeDoctors} actifs</div>
+              <div className="stats-grid">
+                {/* Nombre total de recherches */}
+                <div className="stat-item">
+                  <div className="stat-value">{searchStats.total_searches}</div>
+                  <div className="stat-label">Recherches totales</div>
+                </div>
+
+                {/* Précision moyenne */}
+                <div className="stat-item">
+                  <div className="stat-value">{searchStats.average_confidence}%</div>
+                  <div className="stat-label">Précision moyenne</div>
+                </div>
+
+                {/* Spécialités différentes */}
+                <div className="stat-item">
+                  <div className="stat-value">{searchStats.top_specialties.length}</div>
+                  <div className="stat-label">Spécialités consultées</div>
+                </div>
+
+                {/* Dernière recherche */}
+                <div className="stat-item">
+                  <div className="stat-value">
+                    {searchStats.recent_searches.length > 0 
+                      ? searchStats.recent_searches[0].specialty 
+                      : '-'}
+                  </div>
+                  <div className="stat-label">Dernière recherche</div>
+                </div>
               </div>
 
-              <div className="stat-card">
-                <div className="stat-number">{stats.satisfaction}%</div>
-                <div className="stat-label">Satisfaction</div>
-                <div className="stat-detail">Basée sur {stats.totalReviews} avis</div>
-              </div>
-
-              <div className="stat-card">
-                <div className="stat-number">Dr {stats.lastDoctor}</div>
-                <div className="stat-label">Dernier contact</div>
-                <div className="stat-last">{stats.lastDiagnostic}</div>
-              </div>
+              {/* Top spécialités */}
+              {searchStats.top_specialties.length > 0 && (
+                <div className="top-specialties">
+                  <h3>
+                    <span>🏆</span> Top spécialités recherchées
+                  </h3>
+                  <div>
+                    {searchStats.top_specialties.map((item, index) => (
+                      <div key={index} className="specialty-item">
+                        <div className="specialty-name">
+                          <span className={`specialty-rank rank-${index < 3 ? index + 1 : 'other'}`}>
+                            {index + 1}
+                          </span>
+                          <span style={{ color: '#333', fontWeight: 500 }}>{item.specialty}</span>
+                        </div>
+                        <div className="specialty-count">
+                          {item.count} ({Math.round(item.percentage)}%)
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Two Columns Section */}
@@ -740,7 +998,7 @@ const PatientDashboard: React.FC = () => {
               {/* Quick Actions */}
               <div className="actions-card">
                 <h3>Actions rapides</h3>
-                <div className="action-buttons"  onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>
+                <div className="action-buttons">
                   <button 
                     className="action-btn primary"
                     onClick={handleNewSearch}
@@ -750,7 +1008,7 @@ const PatientDashboard: React.FC = () => {
 
                   <button 
                     className="action-btn"
-                    onClick={() => navigate('/statistiques')}
+                    onClick={() => navigate('/statistiques-patient')}
                   >
                     <span className="action-icon">📊</span> Statistiques détaillées
                   </button>
