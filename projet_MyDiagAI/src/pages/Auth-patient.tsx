@@ -429,7 +429,7 @@ const AuthPage: React.FC = () => {
                 type="email"
                 name="email"
                 className={`form-input ${errors.email ? 'error' : ''}`}
-                placeholder="exemple@email.com"
+                placeholder="rymrabati@gmail.com"
                 value={formData.email}
                 onChange={handleChange}
               />

@@ -1100,7 +1100,7 @@ const PatientStatistics: React.FC = () => {
               MyDiagAI <span>Patient</span>
             </div>
             <div className="nav-links">
-              <a href="#" className="nav-link active">Dashboard</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-dashboard'); }}>Dashboard</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>Recherche</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Statistics-patient'); }}>Statistiques</a>
                <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/History-patient'); }}>Historique</a>
