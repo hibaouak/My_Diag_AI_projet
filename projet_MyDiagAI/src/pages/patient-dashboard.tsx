@@ -873,8 +873,8 @@ const PatientDashboard: React.FC = () => {
 
             <div className="user-profile">
               <div className="user-info">
-                <h4>Bonjour, {user.firstName}</h4>
-                <p>{user.email}</p>
+                <h4>Bonjour, Rym</h4>
+                <p>rymrabati@gmail.com</p>
               </div>
               <div className="user-avatar">{user.avatar}</div>
               <button onClick={handleLogout} className="logout-btn" title="Déconnexion">↪</button>
@@ -886,9 +886,9 @@ const PatientDashboard: React.FC = () => {
             {/* Greeting Section */}
             <div className="greeting-section">
               <div className="greeting">
-                <h1>Bonjour, {user.firstName} {user.lastName}</h1>
+                <h1>Bonjour, Rym </h1>
                 <p>
-                  <strong>Patient</strong> {user.email}
+                  <strong>Patient</strong> rymrabati@gmail.com
                 </p>
                 <p className="assistant-text">
                   Assistant intelligent pour la recherche de médecins

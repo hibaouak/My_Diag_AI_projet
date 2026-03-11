@@ -574,8 +574,8 @@ const PatientSettings: React.FC = () => {
 
             <div className="user-profile">
               <div className="user-info">
-                <h4>Bonjour, {user.firstName}</h4>
-                <p>{user.email}</p>
+                <h4>Bonjour, Rym  Rabati</h4>
+                <p>rymrabati@gmail.com</p>
               </div>
               <div className="user-avatar">{user.avatar}</div>
               <button onClick={handleLogout} className="logout-btn" title="Déconnexion">↪</button>

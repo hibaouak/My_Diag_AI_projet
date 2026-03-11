@@ -1108,8 +1108,8 @@ const PatientStatistics: React.FC = () => {
             </div>
             <div className="user-profile">
               <div className="user-info">
-                <h4>Bonjour, {userName.split(' ')[0]}</h4>
-                <p>jade.d@example.com</p>
+                <h4>Bonjour, Rym </h4>
+                <p>rymrabati@gmail.com</p>
               </div>
               <div className="user-avatar">JD</div>
             </div>
