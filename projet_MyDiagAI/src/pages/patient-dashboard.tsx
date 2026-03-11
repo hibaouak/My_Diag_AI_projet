@@ -909,7 +909,7 @@ const PatientDashboard: React.FC = () => {
             </div>
 
             {/* SECTION STATISTIQUES DE RECHERCHE - DESIGN BLANC */}
-            <div className="search-stats-section">
+          <div className="search-stats-section">
               <div className="stats-header">
                 <h2>
                   <span>📊</span> Vos statistiques de recherche
@@ -978,64 +978,22 @@ const PatientDashboard: React.FC = () => {
             <div className="two-columns">
               {/* Recent Searches */}
               <div className="recent-card">
-                <div className="recent-header">
-                  <h3>Recherches récentes</h3>
-                  <a href="#" onClick={handleViewStats}>Voir tout</a>
-                </div>
+               
 
-                {recentSearches.map((doctor) => (
-                  <div key={doctor.id} className="doctor-item">
-                    <div className="doctor-avatar">{doctor.initials}</div>
-                    <div className="doctor-info">
-                      <h4>{doctor.name}</h4>
-                      <p>{doctor.specialty} • {doctor.clinic}</p>
-                    </div>
-                    <div className="doctor-time">{doctor.timeAgo}</div>
-                  </div>
-                ))}
+                
               </div>
 
               {/* Quick Actions */}
               <div className="actions-card">
-                <h3>Actions rapides</h3>
-                <div className="action-buttons">
-                  <button 
-                    className="action-btn primary"
-                    onClick={handleNewSearch}
-                  >
-                    <span className="action-icon">+</span> Nouvelle recherche
-                  </button>
-
-                  <button 
-                    className="action-btn"
-                    onClick={() => navigate('/statistiques-patient')}
-                  >
-                    <span className="action-icon">📊</span> Statistiques détaillées
-                  </button>
-
-                  <button 
-                    className="action-btn"
-                    onClick={handleRefresh}
-                  >
-                    <span className="action-icon">🔄</span> Actualiser les données
-                  </button>
-                </div>
+               
 
                 <hr />
                 
-                <div className="tip-card">
-                  <p className="tip-title">📍 Astuce</p>
-                  <p className="tip-text">
-                    Activez la géolocalisation pour trouver des médecins autour de vous
-                  </p>
-                </div>
+                
               </div>
             </div>
 
-            {/* Footer Note */}
-            <div className="footer-note">
-              ⏱️ Dernière mise à jour : il y a 10 minutes
-            </div>
+          
           </main>
         </div>
       </div>
