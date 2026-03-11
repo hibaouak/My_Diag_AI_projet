@@ -685,5 +685,77 @@
     ],
     "notes": "",
     "created_at": "2026-03-08T22:19:09.306379"
+  },
+  {
+    "id": "18",
+    "patient_name": "ELGOUDIMI MERYEM",
+    "age": 22,
+    "gender": "F",
+    "symptoms": [
+      "weight_loss",
+      "yellow_crust_ooze"
+    ],
+    "results": [
+      {
+        "disease": "allergy",
+        "probability_percent": 45.57,
+        "probability_decimal": 0.4557,
+        "confidence_level": "MODÉRÉE",
+        "medical_action": "Consulter un Allergologue",
+        "specific_guidance": "Spécialité recommandée: Allergologue",
+        "suggested_tests": [
+          "Examen clinique approfondi",
+          "Analyses sanguines",
+          "Imagerie si nécessaire"
+        ],
+        "risk_level": "Modéré",
+        "recommendations": [
+          "Consultation spécialisée recommandée",
+          "Surveillance des symptômes",
+          "Suivi médical dans les 48h",
+          "Éviter l'automédication"
+        ]
+      },
+      {
+        "disease": "atrophic vaginitis",
+        "probability_percent": 15.81,
+        "probability_decimal": 0.1581,
+        "confidence_level": "FAIBLE",
+        "medical_action": "Diagnostic différentiel à considérer",
+        "specific_guidance": "Spécialité: Gynécologue",
+        "suggested_tests": [
+          "Examen clinique",
+          "Tests spécifiques",
+          "Consultation spécialisée"
+        ],
+        "risk_level": "Faible",
+        "recommendations": [
+          "Surveillance des symptômes",
+          "Examens complémentaires si persistance",
+          "Consultation si aggravation"
+        ]
+      },
+      {
+        "disease": "otitis media",
+        "probability_percent": 8.06,
+        "probability_decimal": 0.0806,
+        "confidence_level": "FAIBLE",
+        "medical_action": "Diagnostic différentiel à considérer",
+        "specific_guidance": "Spécialité: ORL",
+        "suggested_tests": [
+          "Examen clinique",
+          "Tests spécifiques",
+          "Consultation spécialisée"
+        ],
+        "risk_level": "Faible",
+        "recommendations": [
+          "Surveillance des symptômes",
+          "Examens complémentaires si persistance",
+          "Consultation si aggravation"
+        ]
+      }
+    ],
+    "notes": "",
+    "created_at": "2026-03-11T00:13:18.908947"
   }
 ]

@@ -831,7 +831,49 @@ def health_check():
         'database': 'connected' if connection_pool else 'disconnected',
         'timestamp': datetime.now().isoformat()
     }), 200
-
+@app.route('/api/patient/history', methods=['GET'])
+def get_patient_history():
+    """Historique des consultations pour un patient (mock)"""
+    try:
+        # Charger les diagnostics depuis le fichier JSON existant
+        file_path = os.path.join(os.path.dirname(__file__), 'data', 'diagnostics_1.json')
+        if os.path.exists(file_path):
+            with open(file_path, 'r', encoding='utf-8') as f:
+                diagnostics = json.load(f)
+        else:
+            diagnostics = []
+        
+        # Transformer chaque diagnostic en consultation patient
+        consultations = []
+        for diag in diagnostics:
+            top_disease = "Inconnu"
+            if diag.get('results') and len(diag['results']) > 0:
+                top_disease = diag['results'][0].get('disease', 'Inconnu')
+            
+            consultation = {
+                'id': diag.get('id', str(len(consultations)+1)),
+                'doctor_name': "Dr. Martin",
+                'doctor_specialty': "Généraliste",
+                'clinic_name': "Centre Médical",
+                'date': diag.get('created_at', datetime.now().isoformat()),
+                'symptoms': diag.get('symptoms', []),
+                'status': "confirmé",
+                'rating': None,
+                'patient_name': diag.get('patient_name', 'Patient'),
+                'disease': top_disease
+            }
+            consultations.append(consultation)
+        
+        return jsonify({
+            'count': len(consultations),
+            'consultations': consultations,
+            'total': len(consultations)
+        }), 200
+        
+    except Exception as e:
+        print(f"❌ Erreur patient history: {e}")
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 # ==================== DÉMARRAGE ====================
 if __name__ == '__main__':
     try:
@@ -871,3 +913,5 @@ if __name__ == '__main__':
         print(f"\n❌ ERREUR DE DÉMARRAGE: {e}")
         traceback.print_exc()
         input("\nAppuyez sur Entrée pour quitter...")
+
+       

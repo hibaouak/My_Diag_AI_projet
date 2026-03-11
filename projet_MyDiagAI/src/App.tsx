@@ -19,6 +19,8 @@ import Recherche from "@/pages/Recherche";
 import AuthPatient from "./pages/Auth-patient";
 import About from "./pages/About";
 import History from "./pages/History";
+import PatientHistory from './pages/PatientHistory';
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -53,6 +55,11 @@ const App = () => (
             
               {/* Espace Patient - Page Recherche */}
               <Route path="/Recherche" element={<Recherche />} />
+              <Route path="/patient-history" element={
+  <ProtectedRoute> {/* si nécessaire */}
+    <PatientHistory />
+  </ProtectedRoute>
+} />
             {/* Routes protégées - Espace Médecin (besoin d'être connecté) */}
             <Route path="/dashboard" element={
               <ProtectedRoute>

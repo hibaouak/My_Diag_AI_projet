@@ -1,3 +1,4 @@
+//src/pages/patient-dashboard.tsx
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -646,6 +647,7 @@ const PatientDashboard: React.FC = () => {
             <div className="nav-links">
               <a href="#" className="nav-link active">Dashboard</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>Recherche</a>
+                <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-history'); }}>Historique</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/statistiques'); }}>Statistiques</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Settings-patient'); }}>Paramètres</a>
             </div>
