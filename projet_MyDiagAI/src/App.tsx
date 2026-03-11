@@ -21,6 +21,7 @@ import About from "./pages/About";
 import History from "./pages/History";
 import PatientHistory from './pages/PatientHistory';
 import StatisticsPatient from "./pages/Statistics-patient";
+import HistoryPatient from "./pages/History-patient";
 
 
 const queryClient = new QueryClient({
@@ -51,6 +52,8 @@ const App = () => (
             {/* Espace Patient - Page Paramètres */}
             <Route path="/settings-patient" element={<SettingsPatient />} />
              <Route path="/Statistics-patient" element={<StatisticsPatient />} />
+             <Route path="/History-patient" element={<HistoryPatient  />} />
+             
 
             <Route path="/Auth-patient" element={<AuthPatient />} />
              <Route path="/About" element={<About/>} />

@@ -115,6 +115,7 @@ const PatientHistory = () => {
             Nouvelle recherche
           </Button>
         </div>
+        
 
         {/* Barre de recherche */}
         <div className="relative">

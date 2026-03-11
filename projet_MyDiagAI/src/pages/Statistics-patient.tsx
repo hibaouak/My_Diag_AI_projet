@@ -5,7 +5,6 @@ import {
   BarChart3, 
   TrendingUp, 
   Activity, 
-  Users, 
   Calendar, 
   ArrowLeft,
   Download,
@@ -14,11 +13,13 @@ import {
   Phone,
   Mail,
   Building2,
-  Award,
   Target,
   PieChart,
-  Clock
+  Clock,
+  FileText
 } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 interface SearchStats {
   total_searches: number;
@@ -61,8 +62,8 @@ const PatientStatistics: React.FC = () => {
   const [doctorsBySpecialty, setDoctorsBySpecialty] = useState<Record<string, Doctor[]>>({});
   const [selectedSpecialty, setSelectedSpecialty] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [userName] = useState<string>('Jade Dupont');
 
-  // Charger les statistiques depuis le localStorage
   useEffect(() => {
     loadStats();
     loadDoctors();
@@ -72,7 +73,8 @@ const PatientStatistics: React.FC = () => {
     try {
       const saved = localStorage.getItem('patientSearchStats');
       if (saved) {
-        setSearchStats(JSON.parse(saved));
+        const stats = JSON.parse(saved);
+        setSearchStats(stats);
       }
     } catch (error) {
       console.error('Erreur chargement stats:', error);
@@ -80,7 +82,6 @@ const PatientStatistics: React.FC = () => {
   };
 
   const loadDoctors = () => {
-    // Simuler le chargement des médecins depuis le localStorage ou une API
     const mockDoctors: Record<string, Doctor[]> = {
       "Cardiologue": [
         { id: 1, name: "Dr Bennani Youssef", specialty: "Cardiologue", address: "45 Boulevard Zerktouni, Casablanca", phone: "0522-123456", email: "bennani.youssef@cardio.ma", city: "Casablanca", clinic: "Clinique Cardiologique", rating: 4.8 },
@@ -98,6 +99,11 @@ const PatientStatistics: React.FC = () => {
       "ORL": [
         { id: 8, name: "Dr M'hamed Benjelloun", specialty: "ORL", address: "12 Rue de la Liberté, Tanger", phone: "+2120539943967", email: "benjelloun.mhamed@orl.ma", city: "Tanger", clinic: "Cabinet Benjelloun", rating: 4.6 },
         { id: 9, name: "Dr Mohamed Toubali", specialty: "ORL", address: "8 Avenue Hassan II, Tanger", phone: "+2120539333303", email: "toubali.mohamed@orl.ma", city: "Tanger", clinic: "Clinique Toubali", rating: 4.8 }
+      ],
+      "Généraliste": [
+        { id: 10, name: "Dr Tazi Saïda", specialty: "Généraliste", address: "7 Rue Mohammed V, Marrakech", phone: "0524-789012", email: "tazi.saida@generaliste.ma", city: "Marrakech", clinic: "Cabinet Tazi", rating: 4.4 },
+        { id: 11, name: "Dr El Idrissi Rachid", specialty: "Généraliste", address: "15 Avenue Hassan II, Tanger", phone: "0539-345678", email: "elidrissi.rachid@generaliste.ma", city: "Tanger", clinic: "Centre Médical Tanger", rating: 4.6 },
+        { id: 12, name: "Dr Berrada Khadija", specialty: "Généraliste", address: "33 Rue Oued Zem, Casablanca", phone: "0522-789012", email: "berrada.khadija@generaliste.ma", city: "Casablanca", clinic: "Cabinet Berrada", rating: 4.5 }
       ]
     };
     setDoctorsBySpecialty(mockDoctors);
@@ -128,7 +134,7 @@ const PatientStatistics: React.FC = () => {
     }, 1000);
   };
 
-  const handleExport = () => {
+  const handleExportJSON = () => {
     const dataStr = JSON.stringify(searchStats, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
     const exportFileDefaultName = `statistiques_${new Date().toISOString().split('T')[0]}.json`;
@@ -138,10 +144,220 @@ const PatientStatistics: React.FC = () => {
     linkElement.click();
   };
 
+  const handleExportPDF = () => {
+    try {
+      // Créer un nouveau document PDF
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      
+      // === PAGE 1: EN-TÊTE ===
+      doc.setFontSize(22);
+      doc.setTextColor(47, 158, 149);
+      doc.text('MyDiagAI', pageWidth / 2, 20, { align: 'center' });
+      
+      doc.setFontSize(16);
+      doc.setTextColor(100, 100, 100);
+      doc.text('Statistiques Patient', pageWidth / 2, 30, { align: 'center' });
+      
+      doc.setFontSize(10);
+      doc.setTextColor(150, 150, 150);
+      const dateStr = new Date().toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      doc.text(`Généré le ${dateStr} pour ${userName}`, pageWidth / 2, 38, { align: 'center' });
+      
+      doc.setDrawColor(200, 200, 200);
+      doc.line(20, 45, pageWidth - 20, 45);
+      
+      // === STATISTIQUES GLOBALES ===
+      doc.setFontSize(14);
+      doc.setTextColor(47, 158, 149);
+      doc.text('Résumé global', 20, 55);
+      
+      const globalData = [
+        ['Recherches totales', searchStats.total_searches.toString()],
+        ['Précision moyenne', `${searchStats.average_confidence}%`],
+        ['Spécialités consultées', searchStats.top_specialties.length.toString()],
+        ['Dernière recherche', searchStats.recent_searches[0]?.specialty || '-']
+      ];
+      
+      autoTable(doc, {
+        startY: 60,
+        head: [['Indicateur', 'Valeur']],
+        body: globalData,
+        theme: 'striped',
+        headStyles: { fillColor: [47, 158, 149], textColor: 255, fontStyle: 'bold' },
+        alternateRowStyles: { fillColor: [240, 248, 245] },
+        columnStyles: {
+          0: { cellWidth: 80, fontStyle: 'bold' },
+          1: { cellWidth: 60, halign: 'center' }
+        },
+        margin: { left: 20, right: 20 }
+      });
+      
+      let finalY = (doc as any).lastAutoTable.finalY + 15;
+      
+      // === TOP SPÉCIALITÉS ===
+      doc.setFontSize(14);
+      doc.setTextColor(47, 158, 149);
+      doc.text('Top spécialités recherchées', 20, finalY);
+      
+      finalY += 5;
+      
+      if (searchStats.top_specialties.length > 0) {
+        const specialtiesData = searchStats.top_specialties.map((item, index) => [
+          `${index + 1}`,
+          item.specialty,
+          item.count.toString(),
+          `${Math.round(item.percentage)}%`
+        ]);
+        
+        autoTable(doc, {
+          startY: finalY,
+          head: [['#', 'Spécialité', 'Nombre', 'Pourcentage']],
+          body: specialtiesData,
+          theme: 'striped',
+          headStyles: { fillColor: [47, 158, 149], textColor: 255, fontStyle: 'bold' },
+          alternateRowStyles: { fillColor: [240, 248, 245] },
+          columnStyles: {
+            0: { cellWidth: 15, halign: 'center' },
+            1: { cellWidth: 80 },
+            2: { cellWidth: 30, halign: 'center' },
+            3: { cellWidth: 30, halign: 'center' }
+          },
+          margin: { left: 20, right: 20 }
+        });
+        
+        finalY = (doc as any).lastAutoTable.finalY + 15;
+      } else {
+        doc.setFontSize(11);
+        doc.setTextColor(150, 150, 150);
+        doc.text('Aucune donnée disponible', 25, finalY + 5);
+        finalY += 15;
+      }
+      
+      // === RECHERCHES RÉCENTES ===
+      if (finalY > 250) {
+        doc.addPage();
+        finalY = 20;
+      }
+      
+      doc.setFontSize(14);
+      doc.setTextColor(47, 158, 149);
+      doc.text('Recherches récentes', 20, finalY);
+      
+      finalY += 5;
+      
+      if (searchStats.recent_searches.length > 0) {
+        const recentData = searchStats.recent_searches.slice(0, 5).map(search => {
+          const date = new Date(search.date);
+          const dateStr = date.toLocaleDateString('fr-FR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+          });
+          return [
+            search.specialty,
+            search.disease,
+            dateStr,
+            `${search.confidence}%`
+          ];
+        });
+        
+        autoTable(doc, {
+          startY: finalY,
+          head: [['Spécialité', 'Maladie', 'Date', 'Confiance']],
+          body: recentData,
+          theme: 'striped',
+          headStyles: { fillColor: [47, 158, 149], textColor: 255, fontStyle: 'bold' },
+          alternateRowStyles: { fillColor: [240, 248, 245] },
+          columnStyles: {
+            0: { cellWidth: 50 },
+            1: { cellWidth: 50 },
+            2: { cellWidth: 40, halign: 'center' },
+            3: { cellWidth: 30, halign: 'center' }
+          },
+          margin: { left: 20, right: 20 }
+        });
+        
+        finalY = (doc as any).lastAutoTable.finalY + 15;
+      } else {
+        doc.setFontSize(11);
+        doc.setTextColor(150, 150, 150);
+        doc.text('Aucune recherche récente', 25, finalY + 5);
+        finalY += 15;
+      }
+      
+      // === MÉDECINS (si une spécialité est sélectionnée) ===
+      if (selectedSpecialty && doctorsBySpecialty[selectedSpecialty]) {
+        if (finalY > 230) {
+          doc.addPage();
+          finalY = 20;
+        }
+        
+        doc.setFontSize(16);
+        doc.setTextColor(47, 158, 149);
+        doc.text(`Médecins - ${selectedSpecialty}`, 20, finalY);
+        
+        finalY += 10;
+        
+        const doctors = doctorsBySpecialty[selectedSpecialty];
+        const doctorsData = doctors.map(d => [
+          d.name,
+          d.city,
+          d.phone,
+          d.clinic,
+          d.rating ? d.rating.toString() : 'N/A'
+        ]);
+        
+        autoTable(doc, {
+          startY: finalY,
+          head: [['Nom', 'Ville', 'Téléphone', 'Clinique', 'Note']],
+          body: doctorsData,
+          theme: 'striped',
+          headStyles: { fillColor: [47, 158, 149], textColor: 255, fontStyle: 'bold' },
+          alternateRowStyles: { fillColor: [240, 248, 245] },
+          columnStyles: {
+            0: { cellWidth: 50 },
+            1: { cellWidth: 30 },
+            2: { cellWidth: 35 },
+            3: { cellWidth: 40 },
+            4: { cellWidth: 20, halign: 'center' }
+          },
+          margin: { left: 20, right: 20 }
+        });
+      }
+      
+      // === PIED DE PAGE ===
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(9);
+        doc.setTextColor(150, 150, 150);
+        doc.text(
+          `Page ${i} sur ${pageCount} - Généré par MyDiagAI`,
+          pageWidth / 2,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: 'center' }
+        );
+      }
+      
+      // Télécharger le PDF
+      doc.save(`statistiques_mydiagai_${new Date().toISOString().split('T')[0]}.pdf`);
+      
+    } catch (error) {
+      console.error('Erreur lors de la génération du PDF:', error);
+      alert('Erreur lors de la génération du PDF');
+    }
+  };
+
   return (
     <>
-      <style>
-        {`
+      <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
         * {
@@ -182,7 +398,6 @@ const PatientStatistics: React.FC = () => {
           }
         }
 
-        /* Navbar */
         .navbar {
           display: flex;
           justify-content: space-between;
@@ -327,6 +542,18 @@ const PatientStatistics: React.FC = () => {
           border-color: #2f9e95;
         }
 
+        .pdf-btn {
+          background: #f8fbfb;
+          border: none;
+          color:  #2f9e95;
+        }
+
+        .pdf-btn:hover {
+          background:  #2f9e95;
+          color:white;
+          transform: translateY(-2px);
+        }
+
         .export-btn {
           background: #2f9e95;
           border: none;
@@ -339,7 +566,6 @@ const PatientStatistics: React.FC = () => {
           box-shadow: 0 8px 20px rgba(47, 158, 149, 0.3);
         }
 
-        /* Stats Overview */
         .stats-overview {
           display: grid;
           grid-template-columns: repeat(4, 1fr);
@@ -385,7 +611,6 @@ const PatientStatistics: React.FC = () => {
           font-size: 14px;
         }
 
-        /* Main Content Layout */
         .main-content {
           display: grid;
           grid-template-columns: 1fr 1.2fr;
@@ -393,7 +618,6 @@ const PatientStatistics: React.FC = () => {
           margin-bottom: 30px;
         }
 
-        /* Left Column - Charts & Stats */
         .left-column {
           display: flex;
           flex-direction: column;
@@ -492,7 +716,6 @@ const PatientStatistics: React.FC = () => {
           text-align: right;
         }
 
-        /* Recent Searches */
         .recent-searches {
           display: flex;
           flex-direction: column;
@@ -551,7 +774,6 @@ const PatientStatistics: React.FC = () => {
           font-weight: 600;
         }
 
-        /* Right Column - Doctors List */
         .right-column {
           background: #f8fbfb;
           border-radius: 20px;
@@ -684,7 +906,6 @@ const PatientStatistics: React.FC = () => {
           opacity: 0.3;
         }
 
-        /* Loading spinner */
         .loading-spinner {
           display: inline-block;
           width: 20px;
@@ -703,7 +924,6 @@ const PatientStatistics: React.FC = () => {
           .main-content {
             grid-template-columns: 1fr;
           }
-          
           .stats-overview {
             grid-template-columns: repeat(2, 1fr);
           }
@@ -713,49 +933,188 @@ const PatientStatistics: React.FC = () => {
           .stats-card {
             padding: 20px;
           }
-          
           .stats-overview {
             grid-template-columns: 1fr;
           }
-          
           .header-section {
             flex-direction: column;
             align-items: flex-start;
             gap: 15px;
           }
-          
           .header-actions {
             margin-left: 0;
           }
+              font-weight: 700;
+          font-size: 22px;
+          color: #2f9e95;
+          letter-spacing: -0.3px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
         }
-        `}
-      </style>
+
+        /* ==================== HEADER STYLES COMMUNS ==================== */
+
+/* Navbar styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #eef2f3;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 5px;  /* ← CHANGÉ : de 10px à 5px */
+  font-weight: 700;
+  font-size: 22px;
+  color: #2f9e95;
+  letter-spacing: -0.3px;
+}
+
+.logo img {
+  width: 40px;  /* Inchangé */
+  height: 40px;
+  object-fit: contain;
+}
+
+.logo span {
+  background: #2f9e95;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  margin-left: 3px;  /* ← AJOUTÉ : petit espace avant le badge */
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #666;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: #2f9e95;
+}
+
+.nav-link.active {
+  color: #2f9e95;
+  font-weight: 600;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info {
+  text-align: right;
+}
+
+.user-info h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.user-info p {
+  font-size: 13px;
+  color: #666;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  background: #2f9e95;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+  box-shadow: 0 5px 10px rgba(47, 158, 149, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  transition: all 0.3s ease;
+  padding: 5px;
+}
+
+.logout-btn:hover {
+  color: #2f9e95;
+  transform: translateX(5px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .nav-links {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-info {
+    display: none;
+  }
+}
+            
+        }
+      `}</style>
 
       <div className="stats-container">
         <div className="stats-card">
-          {/* Navigation */}
-          <nav className="navbar">
-            <div className="logo">
+            <nav className="navbar">
+             <div className="logo">
+              <img src="./public/logo_app.png" alt="" className="logoapp"/>
+           
+            
               MyDiagAI <span>Patient</span>
             </div>
-            
             <div className="nav-links">
-              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-dashboard'); }}>Dashboard</a>
+              <a href="#" className="nav-link active">Dashboard</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>Recherche</a>
-              <a href="#" className="nav-link active">Statistiques</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Statistics-patient'); }}>Statistiques</a>
+               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/History-patient'); }}>Historique</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Settings-patient'); }}>Paramètres</a>
             </div>
-
             <div className="user-profile">
               <div className="user-info">
-                <h4>Jade Dupont</h4>
+                <h4>Bonjour, {userName.split(' ')[0]}</h4>
                 <p>jade.d@example.com</p>
               </div>
               <div className="user-avatar">JD</div>
             </div>
           </nav>
 
-          {/* Header avec bouton retour et actions */}
           <div className="header-section">
             <button className="back-btn" onClick={() => navigate('/patient-dashboard')}>←</button>
             <h1>Statistiques détaillées</h1>
@@ -764,132 +1123,84 @@ const PatientStatistics: React.FC = () => {
                 {loading ? <span className="loading-spinner"></span> : <RefreshCw size={16} />}
                 Actualiser
               </button>
-              <button className="action-btn export-btn" onClick={handleExport}>
-                <Download size={16} />
-                Exporter
+              <button className="action-btn pdf-btn" onClick={handleExportPDF}>
+                <FileText size={16} />
+                PDF
               </button>
+                
             </div>
           </div>
-
-          {/* Stats Overview */}
           <div className="stats-overview">
             <div className="overview-card">
-              <div className="overview-icon">
-                <Activity size={24} />
-              </div>
+              <div className="overview-icon"><Activity size={24} /></div>
               <div className="overview-value">{searchStats.total_searches}</div>
               <div className="overview-label">Recherches totales</div>
             </div>
-
             <div className="overview-card">
-              <div className="overview-icon">
-                <Target size={24} />
-              </div>
+              <div className="overview-icon"><Target size={24} /></div>
               <div className="overview-value">{searchStats.average_confidence}%</div>
               <div className="overview-label">Précision moyenne</div>
             </div>
-
             <div className="overview-card">
-              <div className="overview-icon">
-                <PieChart size={24} />
-              </div>
+              <div className="overview-icon"><PieChart size={24} /></div>
               <div className="overview-value">{searchStats.top_specialties.length}</div>
               <div className="overview-label">Spécialités consultées</div>
             </div>
-
             <div className="overview-card">
-              <div className="overview-icon">
-                <Clock size={24} />
-              </div>
+              <div className="overview-icon"><Clock size={24} /></div>
               <div className="overview-value">
-                {searchStats.recent_searches.length > 0 
-                  ? searchStats.recent_searches[0].specialty 
-                  : '-'}
+                {searchStats.recent_searches.length > 0 ? searchStats.recent_searches[0].specialty : '-'}
               </div>
               <div className="overview-label">Dernière recherche</div>
             </div>
           </div>
 
-          {/* Main Content */}
           <div className="main-content">
-            {/* Left Column - Charts & Stats */}
             <div className="left-column">
-              {/* Top Spécialités */}
               <div className="stats-card-white">
                 <div className="card-header">
-                  <h3>
-                    <TrendingUp size={18} color="#2f9e95" />
-                    Top spécialités recherchées
-                  </h3>
-                  <span style={{ color: '#666', fontSize: '13px' }}>
-                    {searchStats.top_specialties.length} spécialité(s)
-                  </span>
+                  <h3><TrendingUp size={18} color="#2f9e95" /> Top spécialités recherchées</h3>
+                  <span style={{ color: '#666', fontSize: '13px' }}>{searchStats.top_specialties.length} spécialité(s)</span>
                 </div>
-
                 <div className="specialty-list">
                   {searchStats.top_specialties.length > 0 ? (
                     searchStats.top_specialties.map((item, index) => (
-                      <div 
-                        key={index} 
-                        className={`specialty-item-large ${selectedSpecialty === item.specialty ? 'selected' : ''}`}
-                        onClick={() => setSelectedSpecialty(item.specialty)}
-                      >
+                      <div key={index} className={`specialty-item-large ${selectedSpecialty === item.specialty ? 'selected' : ''}`}
+                           onClick={() => setSelectedSpecialty(item.specialty)}>
                         <div className="specialty-header">
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span style={{ 
-                              width: '24px', 
-                              height: '24px', 
-                              borderRadius: '50%',
+                              width: '24px', height: '24px', borderRadius: '50%',
                               background: index < 3 ? ['#ffd700', '#c0c0c0', '#cd7f32'][index] : '#eef2f3',
                               color: index < 3 ? '#333' : '#666',
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'center',
-                              fontSize: '12px',
-                              fontWeight: '600'
-                            }}>
-                              {index + 1}
-                            </span>
+                              display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: '12px', fontWeight: '600'
+                            }}>{index + 1}</span>
                             <span className="specialty-name-large">{item.specialty}</span>
                           </div>
                           <span className="specialty-count-large">{item.count} fois</span>
                         </div>
                         <div className="progress-container">
-                          <div 
-                            className="progress-bar" 
-                            style={{ 
-                              width: `${item.percentage}%`,
-                              backgroundColor: getProgressBarColor(item.percentage)
-                            }}
-                          />
+                          <div className="progress-bar" style={{ width: `${item.percentage}%`, backgroundColor: getProgressBarColor(item.percentage) }} />
                         </div>
                         <div className="percentage-text">{Math.round(item.percentage)}% des recherches</div>
                       </div>
                     ))
                   ) : (
-                    <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-                      Aucune statistique disponible
-                    </div>
+                    <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>Aucune statistique disponible</div>
                   )}
                 </div>
               </div>
 
-              {/* Recherches récentes */}
               <div className="stats-card-white">
                 <div className="card-header">
-                  <h3>
-                    <Calendar size={18} color="#2f9e95" />
-                    Recherches récentes
-                  </h3>
+                  <h3><Calendar size={18} color="#2f9e95" /> Recherches récentes</h3>
                 </div>
-
                 <div className="recent-searches">
                   {searchStats.recent_searches.length > 0 ? (
                     searchStats.recent_searches.slice(0, 5).map((search, index) => (
                       <div key={index} className="search-item">
-                        <div className="search-icon">
-                          <Activity size={20} />
-                        </div>
+                        <div className="search-icon"><Activity size={20} /></div>
                         <div className="search-content">
                           <div className="search-title">{search.specialty}</div>
                           <div className="search-meta">
@@ -901,15 +1212,12 @@ const PatientStatistics: React.FC = () => {
                       </div>
                     ))
                   ) : (
-                    <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-                      Aucune recherche récente
-                    </div>
+                    <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>Aucune recherche récente</div>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Right Column - Doctors List */}
             <div className="right-column">
               {selectedSpecialty ? (
                 <>
@@ -917,49 +1225,22 @@ const PatientStatistics: React.FC = () => {
                     <h3>{selectedSpecialty}</h3>
                     <p>Médecins disponibles dans cette spécialité</p>
                   </div>
-
                   <div className="doctors-list">
                     {doctorsBySpecialty[selectedSpecialty]?.map((doctor) => (
                       <div key={doctor.id} className="doctor-card">
                         <div className="doctor-header">
                           <span className="doctor-name">{doctor.name}</span>
-                          {doctor.rating && (
-                            <span className="doctor-rating">
-                              <span>⭐</span> {doctor.rating}
-                            </span>
-                          )}
+                          {doctor.rating && <span className="doctor-rating"><span>⭐</span> {doctor.rating}</span>}
                         </div>
-                        
-                        <div className="doctor-detail">
-                          <MapPin size={16} />
-                          <span>{doctor.address}</span>
-                        </div>
-                        
-                        <div className="doctor-detail">
-                          <Phone size={16} />
-                          <span>{doctor.phone}</span>
-                        </div>
-                        
-                        <div className="doctor-detail">
-                          <Mail size={16} />
-                          <span>{doctor.email}</span>
-                        </div>
-
-                        <div className="doctor-clinic">
-                          <Building2 size={14} style={{ marginRight: '6px' }} />
-                          {doctor.clinic} • {doctor.city}
-                        </div>
-
-                        <button className="appointment-btn-small">
-                          Prendre rendez-vous
-                        </button>
+                        <div className="doctor-detail"><MapPin size={16} /> {doctor.address}</div>
+                        <div className="doctor-detail"><Phone size={16} /> {doctor.phone}</div>
+                        <div className="doctor-detail"><Mail size={16} /> {doctor.email}</div>
+                        <div className="doctor-clinic"><Building2 size={14} style={{ marginRight: '6px' }} /> {doctor.clinic} • {doctor.city}</div>
+                        <button className="appointment-btn-small">Prendre rendez-vous</button>
                       </div>
                     ))}
-
                     {(!doctorsBySpecialty[selectedSpecialty] || doctorsBySpecialty[selectedSpecialty].length === 0) && (
-                      <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
-                        Aucun médecin trouvé pour cette spécialité
-                      </div>
+                      <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>Aucun médecin trouvé pour cette spécialité</div>
                     )}
                   </div>
                 </>
@@ -973,15 +1254,8 @@ const PatientStatistics: React.FC = () => {
             </div>
           </div>
 
-          {/* Footer Note */}
-          <div style={{ 
-            textAlign: 'center', 
-            color: '#999', 
-            fontSize: '13px', 
-            marginTop: '30px',
-            paddingTop: '20px',
-            borderTop: '2px solid #eef2f3'
-          }}>
+          <div style={{ textAlign: 'center', color: '#999', fontSize: '13px', marginTop: '30px',
+                        paddingTop: '20px', borderTop: '2px solid #eef2f3' }}>
             ⏱️ Dernière mise à jour : {new Date().toLocaleDateString('fr-FR')} à {new Date().toLocaleTimeString('fr-FR')}
           </div>
         </div>

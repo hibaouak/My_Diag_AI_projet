@@ -566,8 +566,9 @@ const PatientSettings: React.FC = () => {
             
             <div className="nav-links">
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-dashboard'); }}>Dashboard</a>
-              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/recherche-medecins'); }}>Diagnostic</a>
-              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/statistiques'); }}>Statistiques</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>Recherche</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/statistics-patient'); }}>Statistiques</a>
+               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/History-patient'); }}>Historique</a>
               <a href="#" className="nav-link active">Paramètres</a>
             </div>
 

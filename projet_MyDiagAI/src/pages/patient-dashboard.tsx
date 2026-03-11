@@ -866,8 +866,8 @@ const PatientDashboard: React.FC = () => {
             <div className="nav-links">
               <a href="#" className="nav-link active">Dashboard</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>Recherche</a>
-              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-history'); }}>Historique</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Statistics-patient'); }}>Statistiques</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/History-patient'); }}>Historique</a>
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Settings-patient'); }}>Paramètres</a>
             </div>
 

@@ -986,6 +986,148 @@ const SymptomeSearch: React.FC = () => {
           .doctors-grid {
             grid-template-columns: 1fr;
           }
+              font-weight: 700;
+          font-size: 22px;
+          color: #2f9e95;
+          letter-spacing: -0.3px;
+          display: flex;
+          align-items: center;
+          gap: 10px;
+        }/* ==================== HEADER STYLES COMMUNS ==================== */
+
+/* Navbar styles */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #eef2f3;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0px;  /* ← PLUS AUCUN ESPACE */
+  font-weight: 700;
+  font-size: 22px;
+  color: #2f9e95;
+  letter-spacing: -0.3px;
+}
+
+.logo img {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  margin-right: 0px;  /* ← SUPPRIME TOUT MARGIN */
+}
+
+.logo span {
+  background: #2f9e95;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  margin-left: 0px;  /* ← SUPPRIME LA MARGE */
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #666;
+  font-size: 15px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+
+.nav-link:hover {
+  color: #2f9e95;
+}
+
+.nav-link.active {
+  color: #2f9e95;
+  font-weight: 600;
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.user-info {
+  text-align: right;
+}
+
+.user-info h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #333;
+}
+
+.user-info p {
+  font-size: 13px;
+  color: #666;
+}
+
+.user-avatar {
+  width: 45px;
+  height: 45px;
+  background: #2f9e95;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 18px;
+  box-shadow: 0 5px 10px rgba(47, 158, 149, 0.2);
+  transition: transform 0.3s ease;
+}
+
+.user-avatar:hover {
+  transform: scale(1.1);
+}
+
+.logout-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #999;
+  transition: all 0.3s ease;
+  padding: 5px;
+}
+
+.logout-btn:hover {
+  color: #2f9e95;
+  transform: translateX(5px);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  
+  .nav-links {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 600px) {
+  .user-info {
+    display: none;
+  }
+}
+            
         }
         `}
       </style>
@@ -994,14 +1136,20 @@ const SymptomeSearch: React.FC = () => {
         <div className="search-card">
           {/* Navigation */}
           <nav className="navbar">
-            <div className="logo">
+             <div className="logo">
+              <img src="./public/logo_app.png" alt="" className="logoapp"/>
+           
+            
               MyDiagAI <span>Patient</span>
             </div>
             
             <div className="nav-links">
+              
               <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/patient-dashboard'); }}>Dashboard</a>
-              <a href="#" className="nav-link active">Recherche</a>
-              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/mes-favoris'); }}>Mes médecins</a>
+               <a href="#" className="nav-link active" onClick={(e) => { e.preventDefault(); navigate('/Recherche'); }}>Recherche</a> 
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Statistics-patient'); }}>Statistiques</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/History-patient'); }}>Historique</a>
+              <a href="#" className="nav-link" onClick={(e) => { e.preventDefault(); navigate('/Settings-patient'); }}>Paramètres</a>
             </div>
 
             <div className="user-profile">
