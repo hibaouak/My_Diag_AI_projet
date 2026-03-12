@@ -171,10 +171,10 @@ const Auth = () => {
         }
 
         .logo-container {
-          width: 80px;
-          height: 80px;
+          width: 150px;
+          height: 150px;
           margin: 0 auto 1.5rem;
-          background: #2f9e95;
+          
           border-radius: 50%;
           display: flex;
           align-items: center;
@@ -182,12 +182,8 @@ const Auth = () => {
           padding: 1rem;
         }
 
-        .logo-container img {
-          width: 100%;
-          height: 100%;
-          object-fit: contain;
-          filter: brightness(0) invert(1);
-        }
+       .auth-tab-trigger{
+       margin-left:75px;}
 
         .auth-title {
           color: #2f9e95 !important;
@@ -404,7 +400,7 @@ const Auth = () => {
             <Tabs defaultValue="login" className="w-full">
               <TabsList className="auth-tabs-list">
                 <TabsTrigger value="login" className="auth-tab-trigger">Connexion</TabsTrigger>
-                <TabsTrigger value="register" className="auth-tab-trigger">Inscription</TabsTrigger>
+               
               </TabsList>
               
               <TabsContent value="login" className="mt-0">
