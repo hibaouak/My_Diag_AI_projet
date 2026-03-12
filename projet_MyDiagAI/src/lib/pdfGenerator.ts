@@ -290,11 +290,9 @@ export const generateDiagnosticPDF = (
 
   // Nouvelles recommandations générales plus pertinentes
   const generalRecommendations = [
-    "Poursuivre l’évaluation clinique du patient et adapter la prise en charge en fonction des résultats de l’examen clinique, des antécédents médicaux et des examens complémentaires si nécessaire.",
-    "En cas de symptômes d’urgence (ex : douleur thoracique aiguë, essoufflement sévère, confusion, convulsions), orienter immédiatement le patient vers les services d’urgence (15 ou 112).",
-    "Pour les pathologies à sévérité élevée, envisager une prise en charge rapide et multidisciplinaire, incluant éventuellement une hospitalisation.",
-    "Pour les pathologies à sévérité moyenne, planifier un suivi rapproché et envisager des examens complémentaires pour affiner le diagnostic.",
-    "Pour les pathologies à sévérité faible, recommander des mesures de prévention, de surveillance et de gestion des symptômes à domicile, tout en restant vigilant à l’évolution clinique du patient."
+    "Poursuivre l évaluation clinique du patient et adapter la prise en charge en fonction des résultats de l’examen clinique, des antécédents médicaux et des examens complémentaires si nécessaire.",
+    "En cas de symptômes d urgence (ex : douleur thoracique aiguë, essoufflement sévère, confusion, convulsions), orienter immédiatement le patient vers les services d’urgence (15 ou 112).",
+
   ];
 
   doc.setFontSize(10);
@@ -331,8 +329,7 @@ export const generateDiagnosticPDF = (
   const importantInfo = [
     "Ce diagnostic est une suggestion basée sur l'intelligence artificielle et ne remplace pas l'expertise d'un professionnel de santé.",
     "Certaines pathologies peuvent présenter des symptômes similaires. Seul un médecin peut établir un diagnostic précis après examen clinique et examens complémentaires.",
-    "Les probabilités indiquées sont des estimations statistiques et ne constituent pas une certitude médicale.",
-    "Conservez ce rapport pour le présenter à votre médecin lors de votre consultation."
+    
   ];
 
   doc.setFontSize(9);
@@ -357,7 +354,7 @@ export const generateDiagnosticPDF = (
   doc.setTextColor(150, 150, 150);
   doc.setFont("helvetica", "normal");
   doc.text(
-    "Document généré par MyDiagAI - Pour usage médical uniquement. Ne se substitue pas à une consultation médicale.",
+    "Document généré par MyDiagAI - Pour usage médical.",
     pageWidth / 2,
     footerY,
     { align: "center" }

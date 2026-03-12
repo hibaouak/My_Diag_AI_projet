@@ -314,24 +314,7 @@ const Results = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <p className="font-semibold">État des données:</p>
-                <ul className="list-disc list-inside mt-1 text-xs">
-                  <li className={diagnosisResult ? "text-green-600" : "text-red-600"}>
-                    diagnosisResult: {diagnosisResult ? "✅ Présent" : "❌ Absent"}
-                  </li>
-                  <li className={patientInfo ? "text-green-600" : "text-red-600"}>
-                    patientInfo: {patientInfo ? "✅ Présent" : "❌ Absent"}
-                  </li>
-                  <li className={selectedSymptoms?.length ? "text-green-600" : "text-amber-600"}>
-                    selectedSymptoms: {selectedSymptoms?.length || 0} symptômes
-                  </li>
-                  <li className={results.length ? "text-green-600" : "text-amber-600"}>
-                    results: {results.length} résultat(s)
-                  </li>
-                </ul>
-              </div>
+            
               <div>
                 <p className="font-semibold">Aperçu:</p>
                 <p className="text-xs mt-1 bg-white p-2 rounded">
@@ -340,7 +323,7 @@ const Results = () => {
                     : "Aucun résultat à afficher"}
                 </p>
               </div>
-            </div>
+          
             
             {/* Données brutes (repliables) */}
             <details className="mt-4">
