@@ -18,7 +18,7 @@ const PatientSettings: React.FC = () => {
     lastName: 'Dupont',
     email: 'jade.d@example.com',
     location: 'Antibes, 06',
-    avatar: 'JD'
+    avatar: 'RR'
   });
 
   const [notifications, setNotifications] = useState({

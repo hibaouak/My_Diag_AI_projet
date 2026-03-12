@@ -878,7 +878,7 @@ const PatientHistory: React.FC = () => {
                 <h4>Rym Rabati</h4>
                 <p>rymrabati@gmail.com</p>
               </div>
-              <div className="user-avatar">JD</div>
+              <div className="user-avatar">RR</div>
             </div>
           </nav>
 

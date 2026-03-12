@@ -63,7 +63,7 @@ const PatientDashboard: React.FC = () => {
     lastName: 'Dupont',
     email: 'jade.d@example.com',
     location: 'Antibes, 06',
-    avatar: 'JD'
+    avatar: 'RR'
   });
 
   // Charger les statistiques depuis le localStorage
@@ -912,10 +912,10 @@ const PatientDashboard: React.FC = () => {
           <div className="search-stats-section">
               <div className="stats-header">
                 <h2>
-                  <span>📊</span> Vos statistiques de recherche
+                  <span></span> Vos statistiques de recherche
                 </h2>
                 <button className="reset-stats-btn" onClick={handleResetStats}>
-                  <span>🔄</span> Réinitialiser
+                  <span></span> Réinitialiser
                 </button>
               </div>
 

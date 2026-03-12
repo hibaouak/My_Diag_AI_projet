@@ -1111,7 +1111,7 @@ const PatientStatistics: React.FC = () => {
                 <h4>Bonjour, Rym </h4>
                 <p>rymrabati@gmail.com</p>
               </div>
-              <div className="user-avatar">JD</div>
+              <div className="user-avatar">RR</div>
             </div>
           </nav>
 
