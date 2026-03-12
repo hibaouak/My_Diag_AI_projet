@@ -1,0 +1,75 @@
+{
+  "total_searches": 5,
+  "total_confidence": 3.5366417773910404,
+  "searches": [
+    {
+      "date": "2026-03-12T10:20:47.527164",
+      "specialty": "Allergologue",
+      "disease": "allergy",
+      "confidence": 0.9344576597502678,
+      "symptoms": [
+        "skin rash",
+        "skin lesion",
+        "seizures"
+      ]
+    },
+    {
+      "date": "2026-03-12T10:20:25.348894",
+      "specialty": "Psychiatre",
+      "disease": "panic disorder",
+      "confidence": 0.5870013361056099,
+      "symptoms": [
+        "dizziness",
+        "breathing fast",
+        "difficulty in swallowing",
+        "arm pain",
+        "decreased appetite",
+        "acne or pimples",
+        "eye redness"
+      ]
+    },
+    {
+      "date": "2026-03-12T10:19:57.227057",
+      "specialty": "Gynécologue",
+      "disease": "atrophic vaginitis",
+      "confidence": 0.65510185354026,
+      "symptoms": [
+        "blood in urine",
+        "back pain",
+        "low back pain",
+        "ankle pain",
+        "fever"
+      ]
+    },
+    {
+      "date": "2026-03-12T10:19:20.691444",
+      "specialty": "Psychiatre",
+      "disease": "panic disorder",
+      "confidence": 0.6137986038403836,
+      "symptoms": [
+        "anxiety and nervousness",
+        "depression",
+        "ankle pain"
+      ]
+    },
+    {
+      "date": "2026-03-12T06:11:31.538931",
+      "specialty": "Psychiatre",
+      "disease": "panic disorder",
+      "confidence": 0.7462823241545189,
+      "symptoms": [
+        "anxiety and nervousness",
+        "depression",
+        "breathing fast",
+        "blood in urine",
+        "decreased appetite"
+      ]
+    }
+  ],
+  "specialty_counts": {
+    "Psychiatre": 3,
+    "Gynécologue": 1,
+    "Allergologue": 1
+  },
+  "last_updated": "2026-03-12T10:20:47.528082"
+}
